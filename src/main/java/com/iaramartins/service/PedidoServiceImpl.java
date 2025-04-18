@@ -1,14 +1,13 @@
 package com.iaramartins.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.iaramartins.dto.PedidoRequestDTO;
 import com.iaramartins.dto.PedidoResponseDTO;
 import com.iaramartins.model.Cliente;
-import com.iaramartins.model.ItemPedido;
 import com.iaramartins.model.Pedido;
-import com.iaramartins.model.Vela;
 import com.iaramartins.repository.ClienteRepository;
 import com.iaramartins.repository.PedidoRepository;
 import com.iaramartins.repository.VelaRepository;
@@ -40,50 +39,38 @@ public class PedidoServiceImpl implements PedidoService {
 
         // Cria o pedido (sem itens ainda)
         Pedido pedido = new Pedido();
-        pedido.cliente = cliente;
+        pedido.setCliente(cliente);
+        pedido.setData(LocalDateTime.now());
+        pedido.setStatus("PENDENTE"); // Status inicial
+        pedido.setTotal(0.0); // Total zerado (itens serão adicionados depois)
+        
         pedidoRepository.persist(pedido); // Persiste primeiro para gerar ID
-
-        //Adiciona os itens
-        pedido.itens = dto.itens().stream()
-            .map(itemDto -> {
-                Vela vela = velaRepository.findById(itemDto.velaId());
-                if (vela == null) {
-                    throw new NotFoundException("Vela não encontrada: ID " + itemDto.velaId());
-                }
-
-                ItemPedido item = new ItemPedido();
-                item.pedido = pedido; // Associa ao pedido
-                item.vela = vela;
-                item.quantidade = itemDto.quantidade();
-                item.precoUnitario = vela.preco; // Guarda o preço no momento da compra
-                return item;
-            })
-            .collect(Collectors.toList());
-
-        //Calcula o total
-        pedido.calcularTotal(); // Usa o método auxiliar do modelo
+       
 
         // Retorna o DTO de resposta
         return toResponseDTO(pedido);
     }
-
-    // Conversor de Pedido para DTO
+   
+    // Conversor de Pedido para DTO (ajustado para lista vazia se itens forem nulos)
     private PedidoResponseDTO toResponseDTO(Pedido pedido) {
+        List<PedidoResponseDTO.ItemPedidoResponseDTO> itens = pedido.getItens() != null ?
+            pedido.getItens().stream()
+                .map(item -> new PedidoResponseDTO.ItemPedidoResponseDTO(
+                    item.getVela().getNome(),
+                    item.getQuantidade(),
+                    item.getPrecoUnitario()
+                ))
+                .collect(Collectors.toList()) :
+            List.of(); // Retorna lista vazia se itens forem nulos
+
         return new PedidoResponseDTO(
             pedido.id,
-            pedido.cliente.id,
-            pedido.data,
-            pedido.total,
-            pedido.itens.stream()
-                .map(item -> new PedidoResponseDTO.ItemPedidoResponseDTO(
-                    item.vela.nome,
-                    item.quantidade,
-                    item.precoUnitario
-                ))
-                .collect(Collectors.toList())
+            pedido.getCliente().getId(),
+            pedido.getData(),
+            pedido.getTotal(),
+            itens
         );
     }
-
     @Override
     public PedidoResponseDTO getById(Long id) {
         Pedido pedido = pedidoRepository.findById(id);

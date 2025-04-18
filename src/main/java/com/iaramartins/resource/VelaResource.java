@@ -1,7 +1,6 @@
 package com.iaramartins.resource;
 
 
-
 import java.util.List;
 
 import com.iaramartins.dto.VelaRequestDTO;

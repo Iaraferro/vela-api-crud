@@ -21,15 +21,15 @@ public class ClienteServiceImpl implements ClienteService {
     @Transactional
     public ClienteResponseDTO cadastrar(ClienteRequestDTO dto){
         Cliente cliente = new Cliente();
-        cliente.nome = dto.nome();
-        cliente.email = dto.email();
-        cliente.telefone = dto.telefone();
-        clienteRepository.persist(cliente);
+        cliente.setNome(dto.nome());     // Isso daqui como um todo,faz com que os dados que o cliente colocou sejam inseridos no banco de dados
+        cliente.setEmail(dto.email());
+        cliente.setTelefone(dto.telefone());
+        clienteRepository.persist(cliente);// Esse comando faz com que os dados sejam salvos no banco
         return ClienteResponseDTO.valueOf(cliente);
     }
 
     @Override
-    public ClienteResponseDTO getById(Long id) {
+    public ClienteResponseDTO buscarPerfil(Long id) {
         Cliente cliente = clienteRepository.findById(id);
         if (cliente == null) {
             throw new NotFoundException("Cliente não encontrado");
@@ -39,14 +39,14 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     @Transactional
-    public void update(Long id, ClienteRequestDTO dto) {
+    public void atualizar(Long id, ClienteRequestDTO dto) {
         Cliente cliente = clienteRepository.findById(id);
         if (cliente == null) {
             throw new NotFoundException("Cliente não encontrado");
         }
-        cliente.nome = dto.nome();
-        cliente.email = dto.email();
-        cliente.telefone = dto.telefone();
+        cliente.setNome(dto.nome());
+        cliente.setEmail(dto.email());
+        cliente.setTelefone(dto.telefone());
     }
 
     

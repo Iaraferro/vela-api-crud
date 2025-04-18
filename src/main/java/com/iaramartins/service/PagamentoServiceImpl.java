@@ -33,23 +33,20 @@ public class PagamentoServiceImpl implements PagamentoService{
         }
 
         // Valida se o pedido já tem pagamento
-        if (pedido.pagamento != null) {
+        if (pedido.getPagamento() != null) {
             throw new IllegalStateException("Este pedido já possui um pagamento registrado");
         }
 
         //Cria o pagamento
         Pagamento pagamento = new Pagamento();
-        pagamento.pedido = pedido;
-        pagamento.metodo = dto.metodo();
-        pagamento.valor = dto.valor();
-        pagamento.status = "PENDENTE";
-        pagamento.dataPagamento = LocalDateTime.now();
+        pagamento.setPedido(pedido);
+        pagamento.setMetodo(dto.metodo());
+        pagamento.setValor(dto.valor());
+        pagamento.setStatus("PENDENTE");
+        pagamento.setDataPagamento(LocalDateTime.now());
         
         pagamentoRepository.persist(pagamento);
-
-        //Atualiza o pedido com o pagamento
-        pedido.pagamento = pagamento;
-
+        pedido.setPagamento(pagamento);
         // Retorna o DTO de resposta
         return toResponseDTO(pagamento);
     }
@@ -82,10 +79,11 @@ public class PagamentoServiceImpl implements PagamentoService{
         
         // Validações adicionais (ex: só permite transição "PENDENTE" → "APROVADO")
         if ("APROVADO".equals(novoStatus)) {
-            pagamento.status= novoStatus;
-            pagamento.pedido.status = "PAGO"; // Atualiza status do pedido também
-        } else{
-            pagamento.status = novoStatus;
+            pagamento.setStatus(novoStatus);
+            pagamento.getPedido().setStatus("PAGO"); // Atualiza status do pedido também
+        } 
+        else{
+            pagamento.setStatus(novoStatus);
         }
         
     }
@@ -94,11 +92,11 @@ public class PagamentoServiceImpl implements PagamentoService{
     private PagamentoResponseDTO toResponseDTO(Pagamento pagamento) {
         return new PagamentoResponseDTO(
             pagamento.id,
-            pagamento.pedido.id,
-            pagamento.metodo,
-            pagamento.valor,
-            pagamento.status,
-            pagamento.dataPagamento
+            pagamento.getPedido().id,
+            pagamento.getMetodo(),
+            pagamento.getValor(),
+            pagamento.getStatus(),
+            pagamento.getDataPagamento()
         );
     }
 }

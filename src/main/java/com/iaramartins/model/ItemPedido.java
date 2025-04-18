@@ -1,7 +1,5 @@
 package com.iaramartins.model;
 
-
-
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -12,15 +10,58 @@ public class ItemPedido extends PanacheEntity{
     
    @ManyToOne
    @JoinColumn(name = "pedido_Id")
-   public Pedido pedido;
+   private Pedido pedido;
 
    @ManyToOne
    @JoinColumn(name = "vela_id")
-   public Vela vela;
+   private Vela vela;
 
-   public int quantidade;
-   public Double precoUnitario;
+   private int quantidade;
+   private Double precoUnitario;
 
+
+   public Pedido getPedido() {
+      return pedido;
+  }
+
+  public void setPedido(Pedido pedido) {
+      this.pedido = pedido;
+  }
+
+  public Vela getVela() {
+      return vela;
+  }
+
+  public void setVela(Vela vela) {
+      this.vela = vela;
+  }
+
+  public int getQuantidade() {
+      return quantidade;
+  }
+
+  public void setQuantidade(int quantidade) {
+      if (quantidade <= 0) {
+          throw new IllegalArgumentException("Quantidade deve ser positiva");
+      }
+      this.quantidade = quantidade;
+  }
+
+  public Double getPrecoUnitario() {
+      return precoUnitario;
+  }
+
+  public void setPrecoUnitario(Double precoUnitario) {
+      if (precoUnitario <= 0) {
+          throw new IllegalArgumentException("Preço unitário deve ser positivo");
+      }
+      this.precoUnitario = precoUnitario;
+  }
+
+  // --- Métodos auxiliares ---
+  public Double calcularSubtotal() {
+      return precoUnitario * quantidade;
+  }
 
 
 }

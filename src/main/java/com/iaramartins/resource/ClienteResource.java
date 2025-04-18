@@ -1,8 +1,5 @@
 package com.iaramartins.resource;
 
-
-
-
 import com.iaramartins.dto.ClienteRequestDTO;
 import com.iaramartins.dto.ClienteResponseDTO;
 import com.iaramartins.service.ClienteService;
@@ -29,19 +26,19 @@ public class ClienteResource {
     ClienteService clienteService;
     
    // Cadastrar Cliente
-   @POST
+   @POST // Diz que esse método responde a uma requisição POST
    @Transactional
    public Response cadastrar(ClienteRequestDTO dto){
-    ClienteResponseDTO cliente = clienteService.cadastrar(dto);
-    return Response.status(Response.Status.CREATED).entity(cliente).build();
+   ClienteResponseDTO cliente = clienteService.cadastrar(dto);
+   return Response.status(Response.Status.CREATED).entity(cliente).build(); //Mostra como será retornado para o cliente
    }
 
    //Buscar o próprio perfil (só o cliente logado)
    @GET
    @Path("/{id}")
    @RolesAllowed("cliente") //Exige autenticação
-   public ClienteResponseDTO getById(@PathParam("id") Long id){
-    return clienteService.getById(id);
+   public ClienteResponseDTO buscarPerfil(@PathParam("id") Long id){
+    return clienteService.buscarPerfil(id);
    }
 
    //Atualizar os próprios dados
@@ -49,8 +46,8 @@ public class ClienteResource {
    @Path("/{id}")
    @Transactional
    @RolesAllowed("cliente") //Exige autenticação
-   public void update(@PathParam("id") Long id, ClienteRequestDTO dto){
-       clienteService.update(id, dto);
+   public void atualizar(@PathParam("id") Long id, ClienteRequestDTO dto){
+       clienteService.atualizar(id, dto);
    }
 
    //Deletar conta (só o cliente logado)

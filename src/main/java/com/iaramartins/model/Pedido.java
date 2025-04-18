@@ -15,23 +15,80 @@ import jakarta.persistence.OneToOne;
 public class Pedido extends PanacheEntity{
     @ManyToOne
     @JoinColumn(name = "cliente_id")
-    public Cliente cliente;
+    private Cliente cliente;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
-    public List<ItemPedido> itens;
+    private List<ItemPedido> itens;
 
     @OneToOne(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
-    public Pagamento pagamento;
+    private Pagamento pagamento;
 
-    public LocalDateTime data = LocalDateTime.now();
-    public Double total;
+    private LocalDateTime data = LocalDateTime.now();
+    private Double total;
+    private String status = "PENDENTE"; // Ex: PENDENTE, CONCLUIDO, CANCELADO
 
-    public String status;
+    public Cliente getCliente() {
+        return cliente;
+    }
 
-    // Método para calcular o total (opcional)
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public List<ItemPedido> getItens() {
+        return itens;
+    }
+
+    public void setItens(List<ItemPedido> itens) {
+        this.itens = itens;
+    }
+
+    public Pagamento getPagamento() {
+        return pagamento;
+    }
+
+    public void setPagamento(Pagamento pagamento) {
+        this.pagamento = pagamento;
+        if (pagamento != null) {
+            pagamento.setPedido(this); // Mantém a consistência bidirecional
+        }
+    }
+
+    public LocalDateTime getData() {
+        return data;
+    }
+
+    public void setData(LocalDateTime data) {
+        this.data = data;
+    }
+
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        if (total <= 0) throw new IllegalArgumentException("Total inválido");
+        this.total = total;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+     // Método para adicionar item ao pedido
+     public void addItem(ItemPedido item) {
+        this.itens.add(item);
+        item.setPedido(this);
+    }
+
+    // Método para calcular o total 
     public void calcularTotal() {
         this.total = itens.stream()
-            .mapToDouble(item -> item.precoUnitario * item.quantidade)
+            .mapToDouble(item -> item.getPrecoUnitario() * item.getQuantidade())
             .sum();
     }
 

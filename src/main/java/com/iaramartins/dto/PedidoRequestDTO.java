@@ -1,13 +1,12 @@
 package com.iaramartins.dto;
 
-import java.util.List;
+
+import jakarta.validation.constraints.NotNull;
 
 public record PedidoRequestDTO(
-    Long clienteId,
-    List<ItemPedidoDTO> itens
+    @NotNull(message = "ID do cliente é obrigatório")
+    Long clienteId
+   
 ) {
-    public record ItemPedidoDTO(
-        Long velaId,
-        int quantidade
-    ) {}
+   
 } 

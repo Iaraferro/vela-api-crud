@@ -23,12 +23,12 @@ public class VelaServiceImpl implements VelaService {
     @Transactional
     public VelaResponseDTO cadastrar(VelaRequestDTO dto) {
         Vela vela = new Vela();
-        vela.nome = dto.nome();
-        vela.tipo = dto.tipo();
-        vela.aroma = dto.aroma();
-        vela.preco = dto.preco();
-        vela.ingrediente = dto.ingredientes();
-        vela.ritualAssociado = dto.ritualAssociado();
+        vela.setNome(dto.nome());
+        vela.setTipo(dto.tipo());
+        vela.setAroma(dto.aroma());
+        vela.setPreco(dto.preco());
+        vela.setIngrediente(dto.ingrediente());
+        vela.setRitualAssociado(dto.ritualAssociado());
         
         velaRepository.persist(vela);
         return VelaResponseDTO.fromEntity(vela);
@@ -61,9 +61,9 @@ public class VelaServiceImpl implements VelaService {
         if (vela == null){
             throw new NotFoundException("Vela não encontrada");
         } 
-        vela.nome = dto.nome();
-        vela.preco = dto.preco();
-        vela.tipo = dto.tipo(); // Novo campo
+        vela.setNome(dto.nome());
+        vela.setPreco(dto.preco());
+        vela.setTipo(dto.tipo()); // Novo campo
     }
 
    // DELETAR VELA

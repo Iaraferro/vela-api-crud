@@ -16,12 +16,12 @@ public record VelaResponseDTO(
     public static VelaResponseDTO fromEntity(Vela vela) {
         return new VelaResponseDTO(
             vela.id,
-            vela.nome,
-            vela.preco,
-            vela.tipo,
-            vela.aroma,
-            vela.ingrediente,
-            vela.ritualAssociado
+            vela.getNome(),
+            vela.getPreco(),
+            vela.getTipo(),
+            vela.getAroma(),
+            vela.getIngrediente(),
+            vela.getRitualAssociado()
         );
     }    
 } 

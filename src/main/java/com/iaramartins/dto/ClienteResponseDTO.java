@@ -10,7 +10,11 @@ public record ClienteResponseDTO(
     public static ClienteResponseDTO valueOf(Cliente cliente) {
         if (cliente == null)
             return null;
-        return new ClienteResponseDTO(cliente.id, cliente.nome, cliente.email, cliente.telefone);
+        return new ClienteResponseDTO(
+            cliente.getId(),
+            cliente.getNome(),
+            cliente.getEmail(),
+            cliente.getTelefone());
       }
 } 
   
