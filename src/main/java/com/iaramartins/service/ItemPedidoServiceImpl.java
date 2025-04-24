@@ -7,19 +7,19 @@ import com.iaramartins.dto.ItemPedidoResponseDTO;
 import com.iaramartins.model.ItemPedido;
 import com.iaramartins.model.Pedido;
 import com.iaramartins.model.Vela;
-import com.iaramartins.repository.ItemPedidoRepository;
 import com.iaramartins.repository.PedidoRepository;
 import com.iaramartins.repository.VelaRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 
 @ApplicationScoped
 public class ItemPedidoServiceImpl implements ItemPedidoService{
     @Inject
-    ItemPedidoRepository itemPedidoRepository;
+   EntityManager em;
     @Inject
     PedidoRepository pedidoRepository;
     @Inject
@@ -44,11 +44,11 @@ public class ItemPedidoServiceImpl implements ItemPedidoService{
         item.setQuantidade(dto.quantidade());
         item.setPrecoUnitario(vela.getPreco()); // Pega o preço atual da vela
 
-        itemPedidoRepository.persist(item);
+        em.persist(item);
         pedido.calcularTotal();
         
         return new ItemPedidoResponseDTO(
-            item.id,
+            item.getId(),
             vela.getNome(),
             vela.getTipo(),
             item.getQuantidade(),
@@ -59,20 +59,24 @@ public class ItemPedidoServiceImpl implements ItemPedidoService{
     @Override
     @Transactional
     public void removerItem(Long itemId) {
-        ItemPedido item = itemPedidoRepository.findById(itemId);
+        ItemPedido item = em.find(ItemPedido.class, itemId);
         if (item == null) return; // Não faz nada se não existir
-
         Pedido pedido = item.getPedido();
-        itemPedidoRepository.delete(item);
+        em.remove(item);
         pedido.calcularTotal();
     }
 
     @Override
     public List<ItemPedidoResponseDTO> listarItensPorPedido(Long pedidoId) {
-        return itemPedidoRepository.list("pedido.id", pedidoId)
-            .stream()
+        List<ItemPedido> itens = em.createQuery(
+            "SELECT i FROM ItemPedido i WHERE i.pedido.id = :pedidoId", 
+            ItemPedido.class)
+            .setParameter("pedidoId", pedidoId)
+            .getResultList();
+
+            return itens.stream()
             .map(item -> new ItemPedidoResponseDTO(
-                item.id,
+                item.getId(),
                 item.getVela().getNome(),
                 item.getVela().getTipo(),
                 item.getQuantidade(),
@@ -84,14 +88,14 @@ public class ItemPedidoServiceImpl implements ItemPedidoService{
     @Override
     @Transactional
     public ItemPedidoResponseDTO atualizarQuantidade(Long itemId, int novaQuantidade) {
-        ItemPedido item = itemPedidoRepository.findById(itemId);
+        ItemPedido item = em.find(ItemPedido.class, itemId);
         if (item == null) throw new NotFoundException("Item não existe");
 
         item.setQuantidade(novaQuantidade);
         item.getPedido().calcularTotal();
 
         return new ItemPedidoResponseDTO(
-            item.id,
+            item.getId(),
             item.getVela().getNome(),
             item.getVela().getTipo(),
             item.getQuantidade(),

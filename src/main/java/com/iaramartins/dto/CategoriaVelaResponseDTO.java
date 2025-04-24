@@ -9,7 +9,7 @@ public record CategoriaVelaResponseDTO(
 ) {
     public static CategoriaVelaResponseDTO fromEntity(CategoriaVela categoria){
         return new CategoriaVelaResponseDTO(
-            categoria.id,
+            categoria.getId(),
             categoria.getNome(),
             categoria.getDescricao()
         );

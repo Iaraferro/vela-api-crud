@@ -3,14 +3,12 @@ package com.iaramartins.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 
 @Entity
-public class Pagamento extends PanacheEntity {
+public class Pagamento extends DefaultEntity {
     @OneToOne
     @JoinColumn(name = "pedido_id", unique = true)
     private Pedido pedido; // Cada pedido tem um pagamento

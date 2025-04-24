@@ -9,6 +9,7 @@ import com.iaramartins.repository.VelaRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 
@@ -17,6 +18,8 @@ public class VelaServiceImpl implements VelaService {
     @Inject
     VelaRepository velaRepository; // O service usa o repository
 
+    @Inject
+    EntityManager em;
     
     // CADASTRAR (mínimo de validação)
     @Override
@@ -30,13 +33,13 @@ public class VelaServiceImpl implements VelaService {
         vela.setIngrediente(dto.ingrediente());
         vela.setRitualAssociado(dto.ritualAssociado());
         
-        velaRepository.persist(vela);
+        em.persist(vela);
         return VelaResponseDTO.fromEntity(vela);
     }
     // BUSCAR POR ID
     @Override
     public VelaResponseDTO getById(Long id) {
-        Vela vela = velaRepository.findById(id);
+        Vela vela = em.find(Vela.class, id); // Substitui velaRepository.findById()
         if (vela == null) {
             throw new NotFoundException("Vela não encontrada");
         }
@@ -46,7 +49,8 @@ public class VelaServiceImpl implements VelaService {
     // LISTAR DISPONÍVEIS
     @Override
     public List<VelaResponseDTO> listarDisponiveis() {
-        return velaRepository.list("disponivel", true)
+        return em.createQuery("SELECT v FROM Vela v WHERE v.disponivel = true", Vela.class)
+            .getResultList()
             .stream()
             .map(VelaResponseDTO::fromEntity)  // Convertendo cada vela para DTO
             .toList();
@@ -57,7 +61,7 @@ public class VelaServiceImpl implements VelaService {
     @Override
     @Transactional
     public void update(Long id, VelaRequestDTO dto) {
-        Vela vela = velaRepository.findById(id);
+        Vela vela = em.find(Vela.class, id);
         if (vela == null){
             throw new NotFoundException("Vela não encontrada");
         } 
@@ -70,6 +74,9 @@ public class VelaServiceImpl implements VelaService {
    @Override
    @Transactional
    public void deletarVela(Long id) {
-       velaRepository.deleteById(id);
+    Vela vela = em.find(Vela.class, id);
+    if (vela != null) {
+        em.remove(vela); // Remove a entidade gerenciada
+    }
    }
 }

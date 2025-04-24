@@ -2,8 +2,6 @@ package com.iaramartins.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,7 +10,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 @Entity
-public class Vela extends PanacheEntity {
+public class Vela extends DefaultEntity {
     private String nome;
 
     @ManyToOne

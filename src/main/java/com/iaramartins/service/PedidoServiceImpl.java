@@ -9,18 +9,19 @@ import com.iaramartins.dto.PedidoResponseDTO;
 import com.iaramartins.model.Cliente;
 import com.iaramartins.model.Pedido;
 import com.iaramartins.repository.ClienteRepository;
-import com.iaramartins.repository.PedidoRepository;
 import com.iaramartins.repository.VelaRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 
 @ApplicationScoped
 public class PedidoServiceImpl implements PedidoService {
+
     @Inject
-    PedidoRepository pedidoRepository;
+    EntityManager em; //Substitui o PedidoRepository
 
     @Inject
     ClienteRepository clienteRepository;
@@ -44,9 +45,7 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setStatus("PENDENTE"); // Status inicial
         pedido.setTotal(0.0); // Total zerado (itens serão adicionados depois)
         
-        pedidoRepository.persist(pedido); // Persiste primeiro para gerar ID
-       
-
+        em.persist(pedido); // Persiste primeiro para gerar ID
         // Retorna o DTO de resposta
         return toResponseDTO(pedido);
     }
@@ -64,7 +63,7 @@ public class PedidoServiceImpl implements PedidoService {
             List.of(); // Retorna lista vazia se itens forem nulos
 
         return new PedidoResponseDTO(
-            pedido.id,
+            pedido.getId(),
             pedido.getCliente().getId(),
             pedido.getData(),
             pedido.getTotal(),
@@ -73,7 +72,7 @@ public class PedidoServiceImpl implements PedidoService {
     }
     @Override
     public PedidoResponseDTO getById(Long id) {
-        Pedido pedido = pedidoRepository.findById(id);
+        Pedido pedido = em.find(Pedido.class, id);
         if (pedido == null) {
             throw new NotFoundException("Pedido não encontrado");
         }
@@ -82,7 +81,15 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public List<PedidoResponseDTO> listarPorCliente(Long clienteId) {
-        return pedidoRepository.list("cliente.id", clienteId).stream()
+        // Consulta JPQL equivalente ao list("cliente.id", clienteId) do Panache
+        List<Pedido> pedidos = em.createQuery(
+            "SELECT p FROM Pedido p WHERE p.cliente.id = :clienteId", 
+            Pedido.class
+        )
+        .setParameter("clienteId", clienteId)
+        .getResultList();
+
+        return pedidos.stream()
             .map(this::toResponseDTO)
             .collect(Collectors.toList());
     }

@@ -50,10 +50,6 @@ public class Cliente extends Usuario{
         pedido.setCliente(this);
     }
 
-    public Long getId(){
-        return id;
-    }
-
     public boolean isAtivo() {
         return ativo;
     }

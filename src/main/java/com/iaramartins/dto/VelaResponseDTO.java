@@ -15,7 +15,7 @@ public record VelaResponseDTO(
     // Método para converter entidade Vela em DTO
     public static VelaResponseDTO fromEntity(Vela vela) {
         return new VelaResponseDTO(
-            vela.id,
+            vela.getId(),
             vela.getNome(),
             vela.getPreco(),
             vela.getTipo(),

@@ -10,7 +10,7 @@ public record AdminResponseDTO(
 ) {
     public static AdminResponseDTO fromEntity(Admin admin) {
         return new AdminResponseDTO(
-            admin.id,
+            admin.getId(),
             admin.getEmail(),
             admin.getDepartamento(),
             admin.getRole()

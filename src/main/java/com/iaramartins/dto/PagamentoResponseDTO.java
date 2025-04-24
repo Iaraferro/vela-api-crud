@@ -14,8 +14,8 @@ public record PagamentoResponseDTO(Long id,
         
 public static PagamentoResponseDTO fromEntity(Pagamento pagamento) {
     return new PagamentoResponseDTO(
-        pagamento.id,
-        pagamento.getPedido().id,
+        pagamento.getId(),
+        pagamento.getPedido().getId(),
         pagamento.getMetodo(),
         pagamento.getValor(),
         pagamento.getStatus(),

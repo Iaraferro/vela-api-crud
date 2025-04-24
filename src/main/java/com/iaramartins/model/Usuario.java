@@ -1,6 +1,4 @@
 package com.iaramartins.model;
-
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Inheritance;
@@ -9,7 +7,7 @@ import jakarta.persistence.InheritanceType;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_usuario")
-public abstract class Usuario extends PanacheEntity {
+public abstract class Usuario extends DefaultEntity {
     private String email;
     private String senha;
     private String role;

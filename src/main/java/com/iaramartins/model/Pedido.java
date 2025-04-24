@@ -2,8 +2,6 @@ package com.iaramartins.model;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -12,7 +10,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
 @Entity
-public class Pedido extends PanacheEntity{
+public class Pedido extends DefaultEntity{
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
