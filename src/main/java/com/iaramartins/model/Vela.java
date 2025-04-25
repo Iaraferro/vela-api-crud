@@ -20,6 +20,10 @@ public class Vela extends DefaultEntity {
     @Enumerated(EnumType.STRING) //Isso significa que os valores que estão na classe TipoVela serão valores inseridos na coluna TipoVela da tabela Vela como String
     private TipoVela tipo;
 
+    @ManyToOne
+    @JoinColumn(name = "fornecedor_id")
+    private Fornecedor fornecedor;
+
     private String aroma;
     private double preco;
     private String ingrediente; // Exemplo: "Cera de soja, ervas de arruda, óleo essencial de alecrim"
@@ -91,5 +95,12 @@ public class Vela extends DefaultEntity {
 
     public void setItensPedidos(List<ItemPedido> itensPedidos) {
         this.itensPedidos = itensPedidos;
+    }
+
+    public Fornecedor getFornecedor(){
+        return fornecedor;
+    }
+    public void setFornecedor(Fornecedor fornecedor){
+        this.fornecedor = fornecedor;
     }
 }

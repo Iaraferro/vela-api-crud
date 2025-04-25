@@ -1,0 +1,63 @@
+package com.iaramartins.service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.iaramartins.dto.FornecedorRequestDTO;
+import com.iaramartins.dto.FornecedorResponseDTO;
+import com.iaramartins.model.Fornecedor;
+import com.iaramartins.repository.FornecedorRepository;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+
+@ApplicationScoped
+public class FornecedorServiceImpl implements FornecedorService {
+    @Inject
+    FornecedorRepository repository;
+
+     @Override
+    @Transactional
+    public FornecedorResponseDTO criar(FornecedorRequestDTO dto) {
+        Fornecedor fornecedor = new Fornecedor();
+        fornecedor.setNome(dto.nome());
+        fornecedor.setCnpj(dto.cnpj());
+        fornecedor.setTelefone(dto.telefone());
+        
+        repository.persist(fornecedor);
+        return FornecedorResponseDTO.fromEntity(fornecedor);
+    }
+
+    @Override
+    public List<FornecedorResponseDTO> listarTodos() {
+        return repository.listAll().stream()
+            .map(FornecedorResponseDTO::fromEntity)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public FornecedorResponseDTO buscarPorId(Long id) {
+        Fornecedor fornecedor = repository.findById(id);
+        return fornecedor != null ? FornecedorResponseDTO.fromEntity(fornecedor) : null;
+    }
+
+    @Override
+    @Transactional
+    public FornecedorResponseDTO atualizar(Long id, FornecedorRequestDTO dto) {
+        Fornecedor fornecedor = repository.findById(id);
+        if (fornecedor != null) {
+            fornecedor.setNome(dto.nome());
+            fornecedor.setCnpj(dto.cnpj());
+            fornecedor.setTelefone(dto.telefone());
+            repository.persist(fornecedor);
+        }
+        return FornecedorResponseDTO.fromEntity(fornecedor);
+    }
+
+    @Override
+    @Transactional
+    public void deletar(Long id) {
+        repository.delete(id);
+    }
+}

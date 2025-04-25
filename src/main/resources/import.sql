@@ -54,7 +54,13 @@ INSERT INTO Pagamento (pedido_id, valor, metodo, status, dataPagamento) VALUES
 -- Atualiza o status dos pedidos com pagamento aprovado
 UPDATE Pedido SET status = 'PAGO' WHERE id = 1;
 
+INSERT INTO Fornecedor (nome, cnpj, telefone) VALUES 
+('Casa das Velas Místicas', '12345678000199', '11999998888'),
+('Distribuidora de Ervas Sagradas', '98765432000155', '21999997777');
 
+UPDATE Vela SET fornecedor_id = (SELECT id FROM Fornecedor WHERE cnpj = '12345678000199') WHERE id = 1;
+UPDATE Vela SET fornecedor_id = (SELECT id FROM Fornecedor WHERE cnpj = '12345678000199') WHERE id = 2;
+UPDATE Vela SET fornecedor_id = (SELECT id FROM Fornecedor WHERE cnpj = '98765432000155') WHERE id = 3;
 
 
 --insert into Usuario(tipo_usuario, nome, email, telefone, ativo) 
