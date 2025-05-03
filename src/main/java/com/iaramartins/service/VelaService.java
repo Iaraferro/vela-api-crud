@@ -14,6 +14,6 @@ public interface VelaService {
   List<VelaResponseDTO> listarDisponiveis();
   VelaResponseDTO getById(Long id);
   void deletarVela(Long id);
-  
+  List<VelaResponseDTO> listarOrdenadasPorPreco();
 
 }

@@ -9,5 +9,6 @@ public interface PedidoService {
     PedidoResponseDTO criar(PedidoRequestDTO dto);
     PedidoResponseDTO getById(Long id);
     List<PedidoResponseDTO> listarPorCliente(Long clienteId);
-    
+    void atualizarStatus(Long id, String status);
+    void cancelarPedido(Long id);
 } 

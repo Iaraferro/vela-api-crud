@@ -1,6 +1,9 @@
 package com.iaramartins.service;
 
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.iaramartins.dto.ClienteRequestDTO;
 import com.iaramartins.dto.ClienteResponseDTO;
 import com.iaramartins.model.Cliente;
@@ -19,12 +22,21 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     @Transactional
     public ClienteResponseDTO cadastrar(ClienteRequestDTO dto){
-        Cliente cliente = new Cliente();
-        cliente.setNome(dto.nome());     // Isso daqui como um todo,faz com que os dados que o cliente colocou sejam inseridos no banco de dados
-        cliente.setEmail(dto.email());
-        cliente.setTelefone(dto.telefone());
-        em.persist(cliente);// Esse comando faz com que os dados sejam salvos no banco
-        return ClienteResponseDTO.valueOf(cliente);
+       Cliente cliente = new Cliente();
+    cliente.setNome(dto.nome());
+    cliente.setEmail(dto.email());
+    cliente.setTelefone(dto.telefone());
+    cliente.setSenha(dto.senha());
+    cliente.setRole(dto.role());
+    cliente.setAtivo(true);
+    em.persist(cliente);
+    em.flush();
+    return new ClienteResponseDTO(
+        cliente.getId(),
+        cliente.getNome(),
+        cliente.getEmail(),
+        cliente.getTelefone()
+        );
     }
 
     @Override
@@ -56,5 +68,24 @@ public class ClienteServiceImpl implements ClienteService {
         if (cliente != null) {
             em.remove(cliente); // Os pedidos serão deletados automaticamente
         }
+    }
+
+    @Override
+    public List<ClienteResponseDTO> listarTodos() {
+    return em.createQuery("SELECT c FROM Cliente c WHERE c.ativo = true", Cliente.class)
+        .getResultList()
+        .stream()
+        .map(ClienteResponseDTO::valueOf)
+        .collect(Collectors.toList());
+   }
+
+    @Override
+    public List<ClienteResponseDTO> buscarPorNome(String nome) {
+    return em.createQuery("SELECT c FROM Cliente c WHERE c.ativo = true AND c.nome LIKE :nome", Cliente.class)
+        .setParameter("nome", "%" + nome + "%")
+        .getResultList()
+        .stream()
+        .map(ClienteResponseDTO::valueOf)
+        .collect(Collectors.toList());
     }
 }

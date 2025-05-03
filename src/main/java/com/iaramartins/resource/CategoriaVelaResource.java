@@ -16,6 +16,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -43,6 +44,16 @@ public class CategoriaVelaResource {
     @Path("/{id}")
     public CategoriaVelaResponseDTO buscarPorId(@PathParam("id") Long id){
         return service.buscarPorId(id);
+    }
+    @GET
+    @Path("/buscar")
+    public Response buscarPorNome(@QueryParam("nome") String nome) {
+        if (nome == null || nome.isBlank()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity("Parâmetro 'nome' é obrigatório")
+                .build();
+        }
+        return Response.ok(service.buscarPorNome(nome)).build();
     }
 
      @PUT

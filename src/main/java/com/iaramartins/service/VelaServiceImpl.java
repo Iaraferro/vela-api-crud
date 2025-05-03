@@ -79,4 +79,13 @@ public class VelaServiceImpl implements VelaService {
         em.remove(vela); // Remove a entidade gerenciada
     }
    }
+
+   @Override
+   public List<VelaResponseDTO> listarOrdenadasPorPreco() {
+   return em.createQuery("SELECT v FROM Vela v WHERE v.disponivel = true ORDER BY v.preco ASC", Vela.class)
+            .getResultList()
+            .stream()
+            .map(VelaResponseDTO::fromEntity)
+            .toList();
+   }
 }

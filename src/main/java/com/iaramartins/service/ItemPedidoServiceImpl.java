@@ -6,6 +6,7 @@ import com.iaramartins.dto.ItemPedidoRequestDTO;
 import com.iaramartins.dto.ItemPedidoResponseDTO;
 import com.iaramartins.model.ItemPedido;
 import com.iaramartins.model.Pedido;
+import com.iaramartins.model.TipoVela;
 import com.iaramartins.model.Vela;
 import com.iaramartins.repository.PedidoRepository;
 import com.iaramartins.repository.VelaRepository;
@@ -13,13 +14,14 @@ import com.iaramartins.repository.VelaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 
 @ApplicationScoped
 public class ItemPedidoServiceImpl implements ItemPedidoService{
     @Inject
-   EntityManager em;
+    EntityManager em;
     @Inject
     PedidoRepository pedidoRepository;
     @Inject
@@ -59,11 +61,14 @@ public class ItemPedidoServiceImpl implements ItemPedidoService{
     @Override
     @Transactional
     public void removerItem(Long itemId) {
-        ItemPedido item = em.find(ItemPedido.class, itemId);
-        if (item == null) return; // Não faz nada se não existir
-        Pedido pedido = item.getPedido();
-        em.remove(item);
-        pedido.calcularTotal();
+    ItemPedido item = em.find(ItemPedido.class, itemId);
+    if (item == null) {
+        throw new NotFoundException("Item não encontrado");
+    }
+    Pedido pedido = item.getPedido();
+    em.remove(item);
+    em.flush(); // Ensure the deletion is persisted
+    pedido.calcularTotal();
     }
 
     @Override
@@ -101,5 +106,58 @@ public class ItemPedidoServiceImpl implements ItemPedidoService{
             item.getQuantidade(),
             item.getPrecoUnitario()
         );
+    }
+
+    @Override
+public ItemPedidoResponseDTO buscarItemPorId(Long itemId) {
+    ItemPedido item = em.find(ItemPedido.class, itemId);
+    if (item == null) {
+        throw new NotFoundException("Item não encontrado");
+    }
+    return new ItemPedidoResponseDTO(
+        item.getId(),
+        item.getVela().getNome(),
+        item.getVela().getTipo(),
+        item.getQuantidade(),
+        item.getPrecoUnitario()
+    );
+}
+
+@Override
+public List<ItemPedidoResponseDTO> listarItensPorPedidoComFiltros(
+    Long pedidoId, 
+    TipoVela tipoVela, 
+    Integer quantidadeMinima
+) {
+    String query = "SELECT i FROM ItemPedido i WHERE i.pedido.id = :pedidoId";
+    
+    // Filtros dinâmicos
+    if (tipoVela != null) {
+        query += " AND i.vela.tipo = :tipoVela";
+    }
+    if (quantidadeMinima != null) {
+        query += " AND i.quantidade >= :quantidadeMinima";
+    }
+
+    TypedQuery<ItemPedido> typedQuery = em.createQuery(query, ItemPedido.class)
+        .setParameter("pedidoId", pedidoId);
+    
+    if (tipoVela != null) {
+        typedQuery.setParameter("tipoVela", tipoVela);
+    }
+    if (quantidadeMinima != null) {
+        typedQuery.setParameter("quantidadeMinima", quantidadeMinima);
+    }
+
+    return typedQuery.getResultList()
+        .stream()
+        .map(item -> new ItemPedidoResponseDTO(
+            item.getId(),
+            item.getVela().getNome(),
+            item.getVela().getTipo(),
+            item.getQuantidade(),
+            item.getPrecoUnitario()
+        ))
+        .toList();
     }
 }

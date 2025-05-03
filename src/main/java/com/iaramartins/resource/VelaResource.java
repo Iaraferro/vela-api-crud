@@ -49,6 +49,13 @@ public class VelaResource {
         return velaService.getById(id);
     }
 
+    @GET
+    @Path("/ordenadas-por-preco")
+    public Response listarOrdenadasPorPreco() {
+    return Response.ok(velaService.listarOrdenadasPorPreco()).build();
+    }
+
+
     //Atualizar vela (PUT)
     @PUT
     @Path("/{id}")

@@ -1,6 +1,5 @@
 package com.iaramartins.resource;
 
-import java.util.List;
 
 import com.iaramartins.dto.PedidoRequestDTO;
 import com.iaramartins.dto.PedidoResponseDTO;
@@ -9,11 +8,15 @@ import com.iaramartins.service.PedidoService;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -34,13 +37,50 @@ public class PedidoResource {
 
     @GET
     @Path("/{id}")
-    public PedidoResponseDTO buscarPorId(@PathParam("id") Long id) {
-        return pedidoService.getById(id);
+    public Response buscarPorId(@PathParam("id") Long id) {
+        return Response.ok(pedidoService.getById(id)).build();
     }
 
     @GET
     @Path("/cliente/{clienteId}")
-    public List<PedidoResponseDTO> listarPorCliente(@PathParam("clienteId") Long clienteId) {
-        return pedidoService.listarPorCliente(clienteId);
+    public Response listarPorCliente(@PathParam("clienteId") Long clienteId) {
+        return Response.ok(pedidoService.listarPorCliente(clienteId)).build();
     }
+
+    @GET
+    @Path("/itens/{pedidoId}")
+    public Response listarItensPorPedido(@PathParam("pedidoId") Long pedidoId) {
+        PedidoResponseDTO pedido = pedidoService.getById(pedidoId);
+        return Response.ok(pedido.itens()).build();
+    }
+
+    @PUT
+    @Path("/{id}/status")
+    @Transactional
+    public Response atualizarStatus(
+    @PathParam("id") Long id, @QueryParam("valor") String novoStatus) {
+    try {
+    pedidoService.atualizarStatus(id, novoStatus);
+    return Response.ok().build();
+    } catch (NotFoundException e) {
+        return Response.status(404).entity(e.getMessage()).build();
+    } catch (IllegalStateException e) {
+        return Response.status(400).entity(e.getMessage()).build();
+    }
+
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Transactional
+    public Response cancelarPedido(@PathParam("id") Long id) {
+    try {
+        pedidoService.cancelarPedido(id);
+        return Response.noContent().build(); // 204 No Content
+    } catch (NotFoundException e) {
+        return Response.status(404).entity(e.getMessage()).build();
+    } catch (IllegalStateException e) {
+        return Response.status(400).entity(e.getMessage()).build();
+    }
+}
 }

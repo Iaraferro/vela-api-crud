@@ -8,6 +8,7 @@ public record PedidoResponseDTO(
     Long clienteId,
     LocalDateTime data,
     Double total,
+    String status,
     List <ItemPedidoResponseDTO> itens
 ) {
     public record ItemPedidoResponseDTO(

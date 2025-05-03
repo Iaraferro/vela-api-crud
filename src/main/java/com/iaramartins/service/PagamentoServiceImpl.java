@@ -2,6 +2,7 @@ package com.iaramartins.service;
 
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.iaramartins.dto.PagamentoRequestDTO;
 import com.iaramartins.dto.PagamentoResponseDTO;
@@ -13,6 +14,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 
@@ -105,5 +107,45 @@ public class PagamentoServiceImpl implements PagamentoService{
             pagamento.getStatus(),
             pagamento.getDataPagamento()
         );
+    }
+
+    @Override
+    public List<PagamentoResponseDTO> listarTodos(String status) {
+    String query = "SELECT p FROM Pagamento p";
+    if (status != null && !status.isBlank()) {
+        query += " WHERE p.status = :status";
+    }
+
+    TypedQuery<Pagamento> typedQuery = em.createQuery(query, Pagamento.class);
+    if (status != null && !status.isBlank()) {
+        typedQuery.setParameter("status", status);
+    }
+
+    return typedQuery.getResultList()
+        .stream()
+        .map(this::toResponseDTO)
+        .toList();
+   }
+
+   @Override
+   @Transactional
+    public void deletarPagamento(Long id) {
+    Pagamento pagamento = em.find(Pagamento.class, id);
+    if (pagamento == null) {
+        throw new NotFoundException("Pagamento não encontrado com ID: " + id);
+    }
+
+    // Valida se o pagamento já foi aprovado (não pode deletar)
+    if ("APROVADO".equals(pagamento.getStatus())) {
+        throw new IllegalStateException("Pagamento aprovado não pode ser removido!");
+    }
+
+    // Remove a associação bidirecional com o pedido
+    Pedido pedido = pagamento.getPedido();
+    if (pedido != null) {
+        pedido.setPagamento(null);
+    }
+
+    em.remove(pagamento);
     }
 }

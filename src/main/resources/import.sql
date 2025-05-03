@@ -16,14 +16,25 @@ INSERT INTO CategoriaVela (nome, descricao) VALUES
 
 -- Inserções para Usuario (Clientes e Admins)
 -- Clientes
-INSERT INTO Usuario (tipo_usuario, nome, email, telefone, ativo, senha, role) VALUES
-('CLIENTE', 'Maria Silva', 'maria@email.com', '11999990000', true, 'senha123', 'USER'),
-('CLIENTE', 'João Santos', 'joao@email.com', '21999991111', true, 'senha123', 'USER');
+INSERT INTO Usuario (
+    id, tipo_usuario, nome, email, telefone, ativo, senha, role, 
+    departamento, created_at, update_at
+) VALUES
+-- Clientes (tipo_usuario = 'CLIENTE')
+(
+    1, 'CLIENTE', 'Maria Silva', 'maria@email.com', '11999990000', 
+    true, 'senha123', 'USER', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+),
+(
+    2, 'CLIENTE', 'João Santos', 'joao@email.com', '21999991111', 
+    true, 'senha123', 'USER', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+),
+-- Admins (tipo_usuario = 'ADMIN')
+(
+    3, 'ADMIN', 'Admin Loja', 'admin@email.com', NULL, 
+    true, 'admin123', 'ADMIN', 'TI', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+);
 
--- Admins
-INSERT INTO Usuario (tipo_usuario, email, senha, role, departamento) VALUES
-('ADMIN', 'admin1@email.com', 'admin123', 'ADMIN', 'TI'),
-('ADMIN', 'admin2@email.com', 'admin123', 'ADMIN', 'Vendas');
 
 -- Inserções para Vela (relacionadas com Categoria)
 INSERT INTO Vela (nome, tipo, aroma, preco, ingrediente, ritualAssociado, disponivel, categoria_id) VALUES
@@ -61,6 +72,9 @@ INSERT INTO Fornecedor (nome, cnpj, telefone) VALUES
 UPDATE Vela SET fornecedor_id = (SELECT id FROM Fornecedor WHERE cnpj = '12345678000199') WHERE id = 1;
 UPDATE Vela SET fornecedor_id = (SELECT id FROM Fornecedor WHERE cnpj = '12345678000199') WHERE id = 2;
 UPDATE Vela SET fornecedor_id = (SELECT id FROM Fornecedor WHERE cnpj = '98765432000155') WHERE id = 3;
+
+
+
 
 
 --insert into Usuario(tipo_usuario, nome, email, telefone, ativo) 

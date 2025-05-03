@@ -13,7 +13,6 @@ import jakarta.persistence.OneToMany;
 @DiscriminatorValue("CLIENTE")
 public class Cliente extends Usuario{
     private String nome;
-    private String email;
     private boolean ativo = true;
 
     @Column(name = "telefone")
@@ -27,14 +26,6 @@ public class Cliente extends Usuario{
     }
     public void setNome(String nome){
         this.nome = nome;
-    }
-
-    public String getEmail(){
-        return email;
-    }
-
-    public void setEmail(String email){
-        this.email = email;
     }
 
     public String getTelefone(){

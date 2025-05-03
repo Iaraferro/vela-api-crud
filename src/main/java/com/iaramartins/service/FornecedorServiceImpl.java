@@ -10,14 +10,18 @@ import com.iaramartins.repository.FornecedorRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class FornecedorServiceImpl implements FornecedorService {
     @Inject
+    EntityManager em;
+
+    @Inject
     FornecedorRepository repository;
 
-     @Override
+    @Override
     @Transactional
     public FornecedorResponseDTO criar(FornecedorRequestDTO dto) {
         Fornecedor fornecedor = new Fornecedor();
@@ -60,4 +64,14 @@ public class FornecedorServiceImpl implements FornecedorService {
     public void deletar(Long id) {
         repository.delete(id);
     }
+
+    @Override
+public List<FornecedorResponseDTO> buscarPorNome(String nome) {
+    return em.createQuery("SELECT f FROM Fornecedor f WHERE f.nome LIKE :nome", Fornecedor.class)
+        .setParameter("nome", "%" + nome + "%")
+        .getResultList()
+        .stream()
+        .map(FornecedorResponseDTO::fromEntity)
+        .collect(Collectors.toList());
+}
 }

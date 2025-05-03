@@ -3,6 +3,10 @@ package com.iaramartins.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.iaramartins.model.converterjpa.StatusPagamentoConverter;
+
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
@@ -15,6 +19,7 @@ public class Pagamento extends DefaultEntity {
 
     private BigDecimal valor;
     private String metodo; //Pix, Cartão, Boleto
+    @Convert(converter = StatusPagamentoConverter.class)
     private String status;
     private LocalDateTime dataPagamento;
 

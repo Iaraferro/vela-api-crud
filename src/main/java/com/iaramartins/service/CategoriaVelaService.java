@@ -11,4 +11,5 @@ public interface CategoriaVelaService {
     CategoriaVelaResponseDTO buscarPorId(Long id);
     void atualizar(Long id, CategoriaVelaRequestDTO dto);
     void deletar(Long id);
+    List<CategoriaVelaResponseDTO> buscarPorNome(String nome);
 }

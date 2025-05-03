@@ -4,11 +4,17 @@ import java.util.List;
 
 import com.iaramartins.dto.ItemPedidoRequestDTO;
 import com.iaramartins.dto.ItemPedidoResponseDTO;
+import com.iaramartins.model.TipoVela;
 
 public interface ItemPedidoService {
     ItemPedidoResponseDTO adicionarItem(Long pedidoId, ItemPedidoRequestDTO dto);
     void removerItem(Long itemId);
     List<ItemPedidoResponseDTO> listarItensPorPedido(Long pedidoId);
     ItemPedidoResponseDTO atualizarQuantidade(Long itemId, int novaQuantidade);
-    
+    ItemPedidoResponseDTO buscarItemPorId(Long itemId);
+    List<ItemPedidoResponseDTO> listarItensPorPedidoComFiltros(
+        Long pedidoId, 
+        TipoVela tipoVela, 
+        Integer quantidadeMinima
+    );
 } 

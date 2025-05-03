@@ -2,6 +2,7 @@ package com.iaramartins.model;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 
@@ -11,7 +12,7 @@ public class Fornecedor extends DefaultEntity {
     private String cnpj;
     private String telefone;
 
-    @OneToMany(mappedBy = "fornecedor")
+    @OneToMany(mappedBy = "fornecedor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Vela> velas;
 
     // Getters e Setters

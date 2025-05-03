@@ -60,4 +60,12 @@ public class CategoriaVelaServiceImpl implements CategoriaVelaService{
     public void deletar(Long id) {
         repository.deleteById(id);
     }
+
+    @Override
+    public List<CategoriaVelaResponseDTO> buscarPorNome(String nome) {
+    return repository.list("nome like ?1", "%" + nome + "%")
+        .stream()
+        .map(CategoriaVelaResponseDTO::fromEntity)
+        .collect(Collectors.toList());
+}
 }

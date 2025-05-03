@@ -2,7 +2,11 @@ package com.iaramartins.model;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.iaramartins.model.converterjpa.StatusPedidoConverter;
+
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -23,6 +27,7 @@ public class Pedido extends DefaultEntity{
 
     private LocalDateTime data = LocalDateTime.now();
     private Double total;
+    @Convert(converter = StatusPedidoConverter.class)
     private String status = "PENDENTE"; // Ex: PENDENTE, CONCLUIDO, CANCELADO
 
     public Cliente getCliente() {
@@ -74,6 +79,10 @@ public class Pedido extends DefaultEntity{
     }
 
     public void setStatus(String status) {
+        List<String> statusValidos = List.of("PENDENTE", "PAGO", "CANCELADO", "ENVIADO", "ENTREGUE");
+        if (!statusValidos.contains(status)) {
+        throw new IllegalArgumentException("Status inválido: " + status);
+    }
         this.status = status;
     }
 

@@ -11,4 +11,5 @@ public interface FornecedorService {
     FornecedorResponseDTO buscarPorId(Long id);
     FornecedorResponseDTO atualizar(Long id, FornecedorRequestDTO dto);
     void deletar(Long id);
+    List<FornecedorResponseDTO> buscarPorNome(String nome);
 }

@@ -6,6 +6,8 @@ import com.iaramartins.dto.FornecedorRequestDTO;
 import com.iaramartins.dto.FornecedorResponseDTO;
 import com.iaramartins.service.FornecedorService;
 
+import jakarta.ws.rs.core.Response.Status;
+
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
@@ -16,6 +18,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -40,8 +43,23 @@ public class FornecedorResource {
 
     @GET
     @Path("/{id}")
-    public FornecedorResponseDTO buscarPorId(@PathParam("id") Long id) {
-        return service.buscarPorId(id);
+    public Response buscarPorId(@PathParam("id") Long id) {
+        FornecedorResponseDTO fornecedor = service.buscarPorId(id);
+        if (fornecedor == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        return Response.ok(fornecedor).build();
+    }
+
+    @GET
+    @Path("/buscar")
+    public Response buscarPorNome(@QueryParam("nome") String nome) {
+    if (nome == null || nome.isBlank()) {
+        return Response.status(Response.Status.BAD_REQUEST)
+            .entity("O parâmetro 'nome' é obrigatório")
+            .build();
+    }
+    return Response.ok(service.buscarPorNome(nome)).build();
     }
 
     @PUT
