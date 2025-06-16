@@ -13,7 +13,7 @@ public record AdminResponseDTO(
             admin.getId(),
             admin.getEmail(),
             admin.getDepartamento(),
-            admin.getRole()
+            admin.getRole().name()
         );
     }
 }

@@ -55,6 +55,14 @@ public class PedidoServiceImpl implements PedidoService {
                 if (vela == null) {
                     throw new NotFoundException("Vela com ID " + itemDTO.velaId() + " não encontrada");
                 }
+
+                // Verifica se há estoque suficiente
+        if (vela.getEstoque() < itemDTO.quantidade()) {
+            throw new IllegalStateException("Estoque insuficiente para a vela: " + vela.getNome());
+        }
+
+                 // Diminui o estoque
+                vela.setEstoque(vela.getEstoque() - itemDTO.quantidade());
                 ItemPedido item = new ItemPedido();
                 item.setVela(vela);
                 item.setQuantidade(itemDTO.quantidade());
@@ -156,5 +164,7 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.getPagamento().setStatus("ESTORNADO");
     }
     }
+
+    
 
 }

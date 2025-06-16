@@ -6,7 +6,7 @@ import com.iaramartins.dto.PedidoRequestDTO;
 import com.iaramartins.dto.PedidoResponseDTO;
 
 public interface PedidoService {
-    PedidoResponseDTO criar(PedidoRequestDTO dto);
+    PedidoResponseDTO criar(PedidoRequestDTO dto); // String username
     PedidoResponseDTO getById(Long id);
     List<PedidoResponseDTO> listarPorCliente(Long clienteId);
     void atualizarStatus(Long id, String status);

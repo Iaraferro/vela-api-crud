@@ -32,7 +32,7 @@ public class VelaServiceImpl implements VelaService {
         vela.setPreco(dto.preco());
         vela.setIngrediente(dto.ingrediente());
         vela.setRitualAssociado(dto.ritualAssociado());
-        
+        vela.setEstoque(dto.estoque());
         em.persist(vela);
         return VelaResponseDTO.fromEntity(vela);
     }
@@ -88,4 +88,13 @@ public class VelaServiceImpl implements VelaService {
             .map(VelaResponseDTO::fromEntity)
             .toList();
    }
+
+   @Override
+   public Integer verificarEstoque(Long id) {
+    Vela vela = em.find(Vela.class, id);
+    if (vela == null) {
+        throw new NotFoundException("Vela não encontrada");
+    }
+    return vela.getEstoque();
+    }
 }

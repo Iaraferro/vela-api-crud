@@ -2,6 +2,7 @@ package com.iaramartins.Resource;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
@@ -27,10 +28,19 @@ public class CategoriaVelaResourceTest {
     @Inject
     CategoriaVelaService categoriaVelaService;
 
+    private String token;
+
+    @BeforeEach
+    void setUp() {
+        // Gera token de autenticação antes de cada teste
+        token = TokenUtils.generateAdminToken();
+    }
+
     @Test
     @Order(1)
     void testListarTodos() {
         given()
+            .header("Authorization", "Bearer " + token)
             .when().get("/categorias")
             .then()
                 .statusCode(200);
@@ -45,6 +55,7 @@ public class CategoriaVelaResourceTest {
 
         given()
             .contentType(ContentType.JSON)
+            .header("Authorization", "Bearer " + token)
             .body(categoria)
             .when().post("/categorias")
             .then()
@@ -75,6 +86,7 @@ public class CategoriaVelaResourceTest {
 
         given()
             .contentType(ContentType.JSON)
+            .header("Authorization", "Bearer " + token)
             .body(categoriaAtualizada)
             .when().put("/categorias/" + id)
             .then()
@@ -97,6 +109,7 @@ public class CategoriaVelaResourceTest {
         Long idDeletar = categoriaVelaService.criar(categoria).id();
 
         given()
+            .header("Authorization", "Bearer " + token)
             .when().delete("/categorias/" + idDeletar)
             .then()
                 .statusCode(204);
@@ -119,6 +132,7 @@ public class CategoriaVelaResourceTest {
             new CategoriaVelaRequestDTO("Busca Específica", "Descrição busca"));
 
         given()
+            .header("Authorization", "Bearer " + token)
             .queryParam("nome", "Específica")
             .when().get("/categorias/buscar")
             .then()
@@ -135,6 +149,7 @@ public class CategoriaVelaResourceTest {
             new CategoriaVelaRequestDTO("Buscar por ID", "Descrição para buscar"));
 
         given()
+            .header("Authorization", "Bearer " + token)
             .when().get("/categorias/" + categoria.id())
             .then()
                 .statusCode(200)

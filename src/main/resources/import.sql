@@ -17,30 +17,32 @@ INSERT INTO CategoriaVela (nome, descricao) VALUES
 -- Inserções para Usuario (Clientes e Admins)
 -- Clientes
 INSERT INTO Usuario (
-    id, tipo_usuario, nome, email, telefone, ativo, senha, role, 
+    tipo_usuario, nome, email, telefone, ativo, senha, role, 
     departamento, created_at, update_at
 ) VALUES
 -- Clientes (tipo_usuario = 'CLIENTE')
 (
-    1, 'CLIENTE', 'Maria Silva', 'maria@email.com', '11999990000', 
-    true, 'senha123', 'USER', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+     'CLIENTE', 'Maria Silva', 'maria@email.com', '11999990000', 
+    true, 'senha123', 'CLIENTE', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
 ),
 (
-    2, 'CLIENTE', 'João Santos', 'joao@email.com', '21999991111', 
-    true, 'senha123', 'USER', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    'CLIENTE', 'João Santos', 'joao@email.com', '21999991111', 
+    true, 'senha123', 'ADMIN', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
 ),
 -- Admins (tipo_usuario = 'ADMIN')
 (
-    3, 'ADMIN', 'Admin Loja', 'admin@email.com', NULL, 
+     'ADMIN', 'Admin Loja', 'admin@email.com', NULL, 
     true, 'admin123', 'ADMIN', 'TI', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
 );
 
+ALTER SEQUENCE usuario_id_seq RESTART WITH 4;
+
 
 -- Inserções para Vela (relacionadas com Categoria)
-INSERT INTO Vela (nome, tipo, aroma, preco, ingrediente, ritualAssociado, disponivel, categoria_id) VALUES
-('Proteção Ancestral', 'PROTECAO_ESPIRITUAL', 'Arruda', 35.90, 'Cera de abelha, ervas sagradas', 'Proteção contra energias negativas', true, 1),
-('Harmonia Familiar', 'LIMPEZA_ENERGETICA', 'Lavanda', 42.50, 'Cera de soja, óleo essencial', 'Harmonização de ambientes', true, 1),
-('Aroma Relaxante', 'LIMPEZA_ENERGETICA', 'Camomila', 28.00, 'Cera vegetal, essências naturais', 'Relaxamento e meditação', true, 3);
+INSERT INTO Vela (nome, tipo, aroma, preco, ingrediente, ritualAssociado, disponivel, estoque, categoria_id) VALUES
+('Proteção Ancestral', 'PROTECAO_ESPIRITUAL', 'Arruda', 35.90, 'Cera de abelha, ervas sagradas', 'Proteção contra energias negativas', true, 100, 1),
+('Harmonia Familiar', 'LIMPEZA_ENERGETICA', 'Lavanda', 42.50, 'Cera de soja, óleo essencial', 'Harmonização de ambientes', true, 100, 1),
+('Aroma Relaxante', 'LIMPEZA_ENERGETICA', 'Camomila', 28.00, 'Cera vegetal, essências naturais', 'Relaxamento e meditação', true,100 ,3);
 
 -- Inserções para Pedido (relacionados com Cliente)
 INSERT INTO Pedido (cliente_id, data, total, status) VALUES

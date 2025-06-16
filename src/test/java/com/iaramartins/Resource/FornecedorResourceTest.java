@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +18,7 @@ import com.iaramartins.dto.FornecedorResponseDTO;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.parsing.Parser;
 import io.restassured.response.Response;
 import jakarta.ws.rs.core.Response.Status;
 
@@ -30,6 +31,15 @@ public class FornecedorResourceTest {
     private static Long fornecedorId;
     private static final String CNPJ_TESTE = "12345678901234";
     private static final String TELEFONE_TESTE = "11999999999";
+    private String token;
+
+     @BeforeEach
+    public void setUp() {
+        RestAssured.defaultParser = Parser.JSON;
+        
+        // Gera token de autenticação
+        token = TokenUtils.generateAdminToken();
+    }
 
     @Test
     @Order(1)
@@ -42,6 +52,7 @@ public class FornecedorResourceTest {
 
         Response response = RestAssured.given()
             .contentType(ContentType.JSON)
+            .header("Authorization", "Bearer " + token)
             .body(dto)
             .when()
             .post("/fornecedores")
@@ -64,6 +75,7 @@ public class FornecedorResourceTest {
     @Order(2)
     public void testListarFornecedores() {
         Response response = RestAssured.given()
+            .header("Authorization", "Bearer " + token)
             .when()
             .get("/fornecedores")
             .then()
@@ -79,6 +91,7 @@ public class FornecedorResourceTest {
     @Order(3)
     public void testBuscarFornecedorPorId() {
         Response response = RestAssured.given()
+            .header("Authorization", "Bearer " + token)
             .when()
             .get("/fornecedores/" + fornecedorId)
             .then()
@@ -103,11 +116,13 @@ public class FornecedorResourceTest {
         );
         RestAssured.given()
             .contentType(ContentType.JSON)
+            .header("Authorization", "Bearer " + token)
             .body(dto)
             .post("/fornecedores");
 
         // Agora busca
         Response response = RestAssured.given()
+            .header("Authorization", "Bearer " + token)
             .when()
             .queryParam("nome", "Especial")
             .get("/fornecedores/buscar")
@@ -133,6 +148,7 @@ public class FornecedorResourceTest {
 
         Response response = RestAssured.given()
             .contentType(ContentType.JSON)
+            .header("Authorization", "Bearer " + token)
             .body(dto)
             .when()
             .put("/fornecedores/" + fornecedorId)
@@ -160,6 +176,7 @@ public class FornecedorResourceTest {
         
         Response createResponse = RestAssured.given()
             .contentType(ContentType.JSON)
+            .header("Authorization", "Bearer " + token)
             .body(dto)
             .post("/fornecedores");
         
@@ -167,6 +184,7 @@ public class FornecedorResourceTest {
         
         // Verifica se existe antes de deletar
         RestAssured.given()
+            .header("Authorization", "Bearer " + token)
             .when()
             .get("/fornecedores/" + idParaDeletar)
             .then()
@@ -174,6 +192,7 @@ public class FornecedorResourceTest {
         
         // Deleta
         RestAssured.given()
+            .header("Authorization", "Bearer " + token)
             .when()
             .delete("/fornecedores/" + idParaDeletar)
             .then()
@@ -181,6 +200,7 @@ public class FornecedorResourceTest {
         
         // Verifica se foi realmente deletado
         RestAssured.given()
+            .header("Authorization", "Bearer " + token)
             .when()
             .get("/fornecedores/" + idParaDeletar)
             .then()
@@ -191,6 +211,7 @@ public class FornecedorResourceTest {
     @Order(7)
     public void testBuscarFornecedorPorNomeSemParametro() {
         RestAssured.given()
+            .header("Authorization", "Bearer " + token)
             .when()
             .get("/fornecedores/buscar")
             .then()

@@ -6,6 +6,7 @@ import io.restassured.http.ContentType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;  // Para given()
@@ -20,10 +21,9 @@ import io.restassured.response.Response;
 
 import jakarta.inject.Inject;
 
-
-
 import com.iaramartins.dto.VelaRequestDTO;
 import com.iaramartins.model.TipoVela;
+import com.iaramartins.model.Vela;
 import com.iaramartins.service.VelaService;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -33,11 +33,17 @@ public class VelaResourceTest {
     @Inject
     VelaService velaService;
 
+    private String token;
+
+    @BeforeEach
+    void setUp() {
+        token = TokenUtils.generateAdminToken(); 
+    }
 
     @Test
     @Order(1)
     void testCadastrar() {
-        VelaRequestDTO dto = new VelaRequestDTO(
+        VelaRequestDTO dto =  VelaRequestDTO.createWithoutStock(
             "Vela de Proteção Teste",  // Nome único para teste
             39.90,                     // Preço dentro da faixa
             TipoVela.PROTECAO_ESPIRITUAL,
@@ -48,6 +54,7 @@ public class VelaResourceTest {
 
        Response response = given()
         .contentType(ContentType.JSON)
+        .header("Authorization", "Bearer " + token)
         .body(dto)
         .when()
         .post("/velas");
@@ -60,6 +67,7 @@ public class VelaResourceTest {
     @Order(2)
     void testListarDisponiveis() {
         given()
+            .header("Authorization", "Bearer " + token)
             .when().get("/velas/disponiveis")
             .then()
                 .statusCode(200)
@@ -72,11 +80,13 @@ public class VelaResourceTest {
     void testBuscarPorId() {
         // Primeiro busca uma vela existente na base
         Integer idExistente = given()
+            .header("Authorization", "Bearer " + token)
             .when().get("/velas/disponiveis")
             .then()
                 .extract().path("[0].id"); // Pega o ID da primeira vela disponível
 
         given()
+            .header("Authorization", "Bearer " + token)
             .when().get("/velas/" + idExistente)
             .then()
                 .statusCode(200)
@@ -87,6 +97,7 @@ public class VelaResourceTest {
     @Order(4)
     void testListarOrdenadasPorPreco() {
         given()
+            .header("Authorization", "Bearer " + token)
             .when().get("/velas/ordenadas-por-preco")
             .then()
                 .statusCode(200)
@@ -100,7 +111,8 @@ public class VelaResourceTest {
         // Cria uma vela temporária para atualizar
         Long id = given()
             .contentType(ContentType.JSON)
-            .body(new VelaRequestDTO(
+            .header("Authorization", "Bearer " + token)
+            .body( VelaRequestDTO.createWithoutStock(
                 "Vela Temp",
                 25.00,
                 TipoVela.LIMPEZA_ENERGETICA,
@@ -113,7 +125,7 @@ public class VelaResourceTest {
             .statusCode(201)
                 .extract().jsonPath().getLong("id");
 
-        VelaRequestDTO atualizacao = new VelaRequestDTO(
+        VelaRequestDTO atualizacao = VelaRequestDTO.createWithoutStock(
             "Vela Atualizada",
             45.00,
             TipoVela.PROTECAO_ESPIRITUAL,
@@ -124,13 +136,16 @@ public class VelaResourceTest {
 
         given()
             .contentType(ContentType.JSON)
+            .header("Authorization", "Bearer " + token)
             .body(atualizacao)
+            .header("Authorization", "Bearer " + token)
             .when().put("/velas/" + id)
             .then()
                 .statusCode(204);
 
         // Verifica se atualizou
         given()
+            .header("Authorization", "Bearer " + token)
             .when().get("/velas/" + id)
             .then()
                 .body("nome", is("Vela Atualizada"))
@@ -143,7 +158,8 @@ public class VelaResourceTest {
         // Cria uma vela temporária para deletar
         Long id = given()
             .contentType(ContentType.JSON)
-            .body(new VelaRequestDTO(
+            .header("Authorization", "Bearer " + token)
+            .body(VelaRequestDTO.createWithoutStock(
                 "Vela para Deletar",
                 15.00,
                 TipoVela.LIMPEZA_ENERGETICA,
@@ -156,11 +172,13 @@ public class VelaResourceTest {
                 .extract().jsonPath().getLong("id");
 
         given()
+            .header("Authorization", "Bearer " + token)
             .when().delete("/velas/" + id)
             .then()
                 .statusCode(204);
 
         given()
+            .header("Authorization", "Bearer " + token)
             .when().get("/velas/" + id)
             .then()
                 .statusCode(404);

@@ -29,6 +29,7 @@ public class Vela extends DefaultEntity {
     private String ingrediente; // Exemplo: "Cera de soja, ervas de arruda, óleo essencial de alecrim"
     private String ritualAssociado;// Exemplo: "Banimento de energias negativas"
     private boolean disponivel = true;
+    private Integer estoque;
 
     @OneToMany(mappedBy = "vela")
     private List<ItemPedido> itensPedidos = new ArrayList<>();
@@ -102,5 +103,13 @@ public class Vela extends DefaultEntity {
     }
     public void setFornecedor(Fornecedor fornecedor){
         this.fornecedor = fornecedor;
+    }
+
+    public Integer getEstoque(){
+        return estoque;
+    }
+
+    public void setEstoque(Integer estoque){
+        this.estoque = estoque;
     }
 }

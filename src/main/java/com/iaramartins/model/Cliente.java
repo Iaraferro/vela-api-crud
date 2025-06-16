@@ -19,7 +19,7 @@ public class Cliente extends Usuario{
     private String telefone;
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Pedido> pedidos = new ArrayList<>(); // ← Adicione esta linha
+    private List<Pedido> pedidos = new ArrayList<>(); 
 
     public String getNome(){
         return nome;

@@ -6,6 +6,7 @@ import com.iaramartins.dto.AdminRequestDTO;
 import com.iaramartins.dto.AdminResponseDTO;
 import com.iaramartins.model.Admin;
 import com.iaramartins.model.Cliente;
+import com.iaramartins.model.Role;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -27,14 +28,14 @@ public class AdminService {
         admin.setEmail(dto.email());
         admin.setSenha(dto.senha()); // Na prática, use PasswordEncoder
         admin.setDepartamento(dto.departamento());
-        admin.setRole("ADMIN");
+        admin.setRole(Role.ADMIN);
         em.persist(admin); // Salva no banco
         
         return new AdminResponseDTO(
             admin.getId(),
             admin.getEmail(),
             admin.getDepartamento(),
-            admin.getRole()
+            admin.getRole().name()
         );
     }
 
@@ -71,7 +72,7 @@ public class AdminService {
             admin.getId(),
             admin.getEmail(),
             admin.getDepartamento(),
-            admin.getRole()
+            admin.getRole().name()
         );
     }
 

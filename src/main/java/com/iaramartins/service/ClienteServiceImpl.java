@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import com.iaramartins.dto.ClienteRequestDTO;
 import com.iaramartins.dto.ClienteResponseDTO;
 import com.iaramartins.model.Cliente;
+import com.iaramartins.model.Role;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -22,12 +24,12 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     @Transactional
     public ClienteResponseDTO cadastrar(ClienteRequestDTO dto){
-       Cliente cliente = new Cliente();
+    Cliente cliente = new Cliente();
     cliente.setNome(dto.nome());
     cliente.setEmail(dto.email());
     cliente.setTelefone(dto.telefone());
     cliente.setSenha(dto.senha());
-    cliente.setRole(dto.role());
+    cliente.setRole(Role.valueOf(dto.role().toUpperCase()));
     cliente.setAtivo(true);
     em.persist(cliente);
     em.flush();

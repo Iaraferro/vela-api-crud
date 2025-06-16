@@ -17,4 +17,8 @@ public interface ItemPedidoService {
         TipoVela tipoVela, 
         Integer quantidadeMinima
     );
+
+    default boolean verificarDisponibilidadeEstoque(Long velaId, int quantidade) {
+        throw new UnsupportedOperationException("Método não implementado");
+    }
 } 

@@ -30,6 +30,11 @@ public class ItemPedidoServiceImpl implements ItemPedidoService{
     @Override
     @Transactional
     public ItemPedidoResponseDTO adicionarItem(Long pedidoId, ItemPedidoRequestDTO dto) {
+
+        if (dto.quantidade() <= 0) {
+            throw new IllegalArgumentException("Quantidade deve ser positiva");
+        }
+        
         Pedido pedido = pedidoRepository.findById(pedidoId);
         if (pedido == null) {
             throw new NotFoundException("Pedido não encontrado");
@@ -39,6 +44,15 @@ public class ItemPedidoServiceImpl implements ItemPedidoService{
         if (vela == null) {
             throw new NotFoundException("Vela não encontrada");
         }
+        if (vela.getEstoque() == null) {
+            throw new IllegalArgumentException("Estoque da vela não pode ser nulo");
+        }
+        if (dto.quantidade() > vela.getEstoque()) {
+        throw new IllegalArgumentException("Quantidade solicitada excede o estoque disponível");
+        }
+        vela.setEstoque(vela.getEstoque() - dto.quantidade());
+
+        
 
         ItemPedido item = new ItemPedido();
         item.setPedido(pedido);
@@ -56,6 +70,13 @@ public class ItemPedidoServiceImpl implements ItemPedidoService{
             item.getQuantidade(),
             item.getPrecoUnitario()
         );
+    }
+
+    @Override
+    public boolean verificarDisponibilidadeEstoque(Long velaId, int quantidade) {
+        Vela vela = velaRepository.findById(velaId);
+        if (vela == null) return false;
+        return vela.getEstoque() != null && vela.getEstoque() >= quantidade;
     }
 
     @Override
@@ -109,7 +130,7 @@ public class ItemPedidoServiceImpl implements ItemPedidoService{
     }
 
     @Override
-public ItemPedidoResponseDTO buscarItemPorId(Long itemId) {
+    public ItemPedidoResponseDTO buscarItemPorId(Long itemId) {
     ItemPedido item = em.find(ItemPedido.class, itemId);
     if (item == null) {
         throw new NotFoundException("Item não encontrado");

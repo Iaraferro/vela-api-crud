@@ -1,6 +1,11 @@
 package com.iaramartins.model;
+
+
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 
@@ -10,7 +15,10 @@ import jakarta.persistence.InheritanceType;
 public abstract class Usuario extends DefaultEntity {
     private String email;
     private String senha;
-    private String role;
+   
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
     public String getEmail(){
         return email;
@@ -24,10 +32,10 @@ public abstract class Usuario extends DefaultEntity {
     public void setSenha(String senha){
         this.senha= senha;
     }
-    public String getRole(){
+    public Role getRole(){
         return role;
     }
-    public void setRole(String role){
+    public void setRole(Role role){
         this.role = role;
     }
 }

@@ -12,4 +12,5 @@ public interface PagamentoService {
     void atualizarStatus(Long id, String novoStatus);
     List<PagamentoResponseDTO> listarTodos(String status);
     void deletarPagamento(Long id);
+    byte[] gerarQrCodePagamento(Long pedidoId);
 }

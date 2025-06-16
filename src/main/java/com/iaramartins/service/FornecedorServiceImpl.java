@@ -73,5 +73,5 @@ public List<FornecedorResponseDTO> buscarPorNome(String nome) {
         .stream()
         .map(FornecedorResponseDTO::fromEntity)
         .collect(Collectors.toList());
-}
+    }
 }

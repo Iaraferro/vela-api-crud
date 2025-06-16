@@ -34,10 +34,14 @@ public class PagamentoResourceTest {
     PagamentoService pagamentoService;
 
    private Long pedidoIdTeste;
+   private String token;
 
     @BeforeEach
     @Transactional
     void setUp() {
+        // Gera token de autenticação
+        token = TokenUtils.generateAdminToken();
+
         // Cria um novo pedido para cada teste
         PedidoRequestDTO pedido = new PedidoRequestDTO(
             1L, // clienteId
@@ -56,6 +60,7 @@ public class PagamentoResourceTest {
 
         given()
             .contentType(ContentType.JSON)
+            .header("Authorization", "Bearer " + token)
             .body(request)
             .when()
             .post("/pagamentos") // POST /pagamentos
@@ -72,6 +77,7 @@ public class PagamentoResourceTest {
         PagamentoResponseDTO pagamento = criarPagamentoTeste();
         
         given()
+            .header("Authorization", "Bearer " + token)
             .when()
             .get("/pagamentos/" + pagamento.id()) // GET /pagamentos/{id}
             .then()
@@ -84,6 +90,7 @@ public class PagamentoResourceTest {
         PagamentoResponseDTO pagamento = criarPagamentoTeste();
         
         given()
+            .header("Authorization", "Bearer " + token)
             .when()
             .put("/pagamentos/" + pagamento.id() + "/aprovar") // PUT /pagamentos/{id}/aprovar
             .then()
@@ -99,6 +106,7 @@ public class PagamentoResourceTest {
         PagamentoResponseDTO pagamento = criarPagamentoTeste();
         
         given()
+            .header("Authorization", "Bearer " + token)
             .when()
             .get("/pagamentos/pedido/" + pagamento.pedidoId()) // GET /pagamentos/pedido/{pedidoId}
             .then()
@@ -111,6 +119,7 @@ public class PagamentoResourceTest {
         PagamentoResponseDTO pagamento = criarPagamentoTeste();
         
         given()
+            .header("Authorization", "Bearer " + token)
             .when()
             .delete("/pagamentos/" + pagamento.id()) // DELETE /pagamentos/{id}
             .then()
@@ -136,6 +145,7 @@ public class PagamentoResourceTest {
         
         given()
             .contentType(ContentType.JSON)
+            .header("Authorization", "Bearer " + token)
             .body(segundoPagamento)
             .when()
             .post("/pagamentos")

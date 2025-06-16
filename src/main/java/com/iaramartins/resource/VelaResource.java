@@ -2,10 +2,15 @@ package com.iaramartins.resource;
 
 
 import java.util.List;
+import java.util.Map;
+import org.jboss.logging.Logger;
 
 import com.iaramartins.dto.VelaRequestDTO;
 import com.iaramartins.dto.VelaResponseDTO;
 import com.iaramartins.service.VelaService;
+
+import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
@@ -19,17 +24,22 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+
+ @Authenticated
  @Path("/velas")
  @Produces(MediaType.APPLICATION_JSON)
  @Consumes(MediaType.APPLICATION_JSON)
+ public class VelaResource {
+    private static final Logger LOG = Logger.getLogger(VelaResource.class);
 
-public class VelaResource {
     @Inject
     VelaService velaService;
 
     @POST
+    @RolesAllowed("ADMIN")
     @Transactional
     public Response cadastrar(VelaRequestDTO dto) {
+        LOG.info(" Método VelaResource.cadastrar() chamado");
         return Response
             .status(201)
             .entity(velaService.cadastrar(dto))
@@ -39,6 +49,7 @@ public class VelaResource {
     @GET
     @Path("/disponiveis")
     public List<VelaResponseDTO> disponiveis() {
+        LOG.info(" Método VelaResource.disponiveis() chamado");
         return velaService.listarDisponiveis();
     }
 
@@ -46,31 +57,53 @@ public class VelaResource {
     @GET
     @Path("/{id}")
     public VelaResponseDTO buscarPorId(@PathParam("id") Long id) {
+        LOG.info(" Método VelaResource.buscarPorId() chamado");
         return velaService.getById(id);
     }
 
     @GET
     @Path("/ordenadas-por-preco")
     public Response listarOrdenadasPorPreco() {
-    return Response.ok(velaService.listarOrdenadasPorPreco()).build();
+        LOG.info("🕯️ Método VelaResource.listarOrdenadasPorPreco() chamado");
+        return Response.ok(velaService.listarOrdenadasPorPreco()).build();
     }
 
 
     //Atualizar vela (PUT)
     @PUT
+    @RolesAllowed("ADMIN")
     @Path("/{id}")
     @Transactional
     public void atualizar(@PathParam("id") Long id, VelaRequestDTO dto) {
+        LOG.info(" Método VelaResource.atualizar() chamado");
         velaService.update(id, dto);
     }
 
     //Deletar vela(DELETE)
     @DELETE
     @Path("/{id}")
+    @RolesAllowed("ADMIN")
     @Transactional
     public void deletar(@PathParam("id") Long id) {
+        LOG.info(" Método VelaResource.deletar() chamado");
         velaService.deletarVela(id);
     }
+
+    @GET
+    @Path("/{id}/estoque")
+    @RolesAllowed({"ADMIN", "CLIENTE"})
+    public Response verificarEstoque(@PathParam("id") Long id) {
+    LOG.info(" Método VelaResource.verificarEstoque() chamado");
+    Integer estoqueAtual = velaService.verificarEstoque(id);
+    return Response.ok(Map.of(
+        "velaId", id,
+        "estoqueAtual", estoqueAtual,
+        "mensagem", estoqueAtual > 0 ? "Disponível" : "Esgotado"
+    )).build();
+
+    }
+
+    
 }
 
     

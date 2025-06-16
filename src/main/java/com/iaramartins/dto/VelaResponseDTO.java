@@ -10,7 +10,8 @@ public record VelaResponseDTO(
     TipoVela tipo,
     String aroma,
     String ingredientes,
-    String ritualAssociado
+    String ritualAssociado,
+    Integer estoque
 ) {
     // Método para converter entidade Vela em DTO
     public static VelaResponseDTO fromEntity(Vela vela) {
@@ -21,7 +22,8 @@ public record VelaResponseDTO(
             vela.getTipo(),
             vela.getAroma(),
             vela.getIngrediente(),
-            vela.getRitualAssociado()
+            vela.getRitualAssociado(),
+            vela.getEstoque()
         );
     }    
 } 

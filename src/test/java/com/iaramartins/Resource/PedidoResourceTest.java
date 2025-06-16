@@ -9,7 +9,7 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 import java.util.List;
 
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
@@ -31,7 +31,14 @@ public class PedidoResourceTest {
     @Inject
     PedidoService pedidoService;
 
+    private String token;
     static Long idCriado = null;
+
+    @BeforeEach
+    void setUp() {
+        // Gera token de autenticação antes de cada teste
+        token = TokenUtils.generateClientToken();
+    }
 
     @Test
     void testCriar() {
@@ -42,6 +49,7 @@ public class PedidoResourceTest {
 
         idCriado = given()
             .contentType(ContentType.JSON)
+            .header("Authorization", "Bearer " + token)
             .body(pedido)
             .when().post("/pedidos")
             .then()
@@ -65,6 +73,7 @@ public class PedidoResourceTest {
         idCriado = pedidoService.criar(pedido).id();
 
         given()
+            .header("Authorization", "Bearer " + token)
             .when().get("/pedidos/" + idCriado)
             .then()
                 .statusCode(200)
@@ -77,6 +86,7 @@ public class PedidoResourceTest {
     @Test
     void testListarPorCliente() {
         given()
+            .header("Authorization", "Bearer " + token)
             .when().get("/pedidos/cliente/1")
             .then()
                 .statusCode(200)
@@ -108,6 +118,7 @@ public class PedidoResourceTest {
     // Testa o endpoint
     given()
         .contentType(ContentType.JSON)
+        .header("Authorization", "Bearer " + token)
         .when()
         .get("/pedidos/itens/" + pedidoId)
         .then()
@@ -128,6 +139,7 @@ public class PedidoResourceTest {
         Long pedidoId = pedidoService.criar(pedido).id();
 
         given()
+            .header("Authorization", "Bearer " + token)
             .queryParam("valor", "PAGO")
             .when().put("/pedidos/" + pedidoId + "/status")
             .then()
@@ -147,6 +159,7 @@ public class PedidoResourceTest {
         Long pedidoId = pedidoService.criar(pedido).id();
 
         given()
+            .header("Authorization", "Bearer " + token)
             .when().delete("/pedidos/" + pedidoId)
             .then()
                 .statusCode(204);
@@ -158,6 +171,7 @@ public class PedidoResourceTest {
     @Test
     void testBuscarPorIdNaoExistente() {
         given()
+            .header("Authorization", "Bearer " + token)
             .when().get("/pedidos/99999")
             .then()
                 .statusCode(404);
@@ -174,6 +188,7 @@ public class PedidoResourceTest {
         pedidoService.cancelarPedido(pedidoId);
 
         given()
+            .header("Authorization", "Bearer " + token)
             .queryParam("valor", "PAGO")
             .when().put("/pedidos/" + pedidoId + "/status")
             .then()

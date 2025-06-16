@@ -1,4 +1,5 @@
 package com.iaramartins.resource;
+import org.jboss.logging.Logger;
 
 import java.net.URI;
 
@@ -6,6 +7,8 @@ import com.iaramartins.dto.ClienteRequestDTO;
 import com.iaramartins.dto.ClienteResponseDTO;
 import com.iaramartins.service.ClienteService;
 
+import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -25,18 +28,23 @@ import jakarta.ws.rs.core.Response;
 
 import jakarta.ws.rs.core.Response.Status;
 
+@Authenticated
 @Path("/clientes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ClienteResource {
+  private static final Logger LOG = Logger.getLogger(ClienteResource.class);
+
     @Inject
     ClienteService clienteService;
     
    // Cadastrar Cliente
    @POST // Diz que esse método responde a uma requisição POST
    @Transactional
+   @PermitAll
    public Response cadastrar( @Valid ClienteRequestDTO dto){
-   try {
+    LOG.info(" Método ClienteResource.cadastrar() chamado");
+     try {
         ClienteResponseDTO response = clienteService.cadastrar(dto);
         return Response
             .created(URI.create("/clientes/" + response.id()))
@@ -53,8 +61,9 @@ public class ClienteResource {
    //Buscar o próprio perfil (só o cliente logado)
    @GET
    @Path("/{id}")
-   @RolesAllowed("cliente") //Exige autenticação
+   @RolesAllowed("CLIENTE") //Exige autenticação
    public Response buscarPerfil(@PathParam("id") Long id){
+    LOG.info("🙋 Método ClienteResource.buscarPerfil() chamado");
     try {
         return Response.ok(clienteService.buscarPerfil(id)).build();
         } catch (NotFoundException e) {
@@ -66,8 +75,9 @@ public class ClienteResource {
    @PUT
    @Path("/{id}")
    @Transactional
-   @RolesAllowed("cliente") //Exige autenticação
+   @RolesAllowed("CLIENTE") //Exige autenticação
    public Response atualizar(@PathParam("id") Long id, ClienteRequestDTO dto){
+        LOG.info(" Método ClienteResource.atualizar() chamado");
         try {
         clienteService.atualizar(id, dto);
         return Response.noContent().build();
@@ -80,21 +90,24 @@ public class ClienteResource {
    @DELETE
    @Path("/{id}")
    @Transactional
-   @RolesAllowed("cliente") //Exige autenticação
+   @RolesAllowed("CLIENTE") //Exige autenticação
    public void deletar(@PathParam("id") Long id){
+     LOG.info(" Método ClienteResource.deletar() chamado");
      clienteService.deletarCliente(id);
    }
 
    @GET
-   @RolesAllowed("admin") // Somente administradores podem listar todos clientes
+   @RolesAllowed("ADMIN") // Somente administradores podem listar todos clientes
    public Response listarTodos() {
+    LOG.info(" Método ClienteResource.listarTodos() chamado");
     return Response.ok(clienteService.listarTodos()).build();
   }
 
    @GET
    @Path("/buscar")
-   @RolesAllowed("admin") // Somente administradores podem buscar clientes
+   @RolesAllowed("ADMIN") // Somente administradores podem buscar clientes
    public Response buscarPorNome(@QueryParam("nome") String nome) {
+    LOG.info(" Método ClienteResource.buscarPorNome() chamado");
     if (nome == null || nome.isBlank()) {
         return Response.status(Response.Status.BAD_REQUEST)
             .entity("O parâmetro 'nome' é obrigatório")

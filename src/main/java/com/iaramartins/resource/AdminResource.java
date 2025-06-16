@@ -1,10 +1,12 @@
 package com.iaramartins.resource;
+import org.jboss.logging.Logger;
 
 import java.util.List;
 
 import com.iaramartins.dto.AdminRequestDTO;
 import com.iaramartins.dto.AdminResponseDTO;
 import com.iaramartins.service.AdminService;
+
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -26,12 +28,15 @@ import jakarta.ws.rs.core.Response;
 @RolesAllowed("ADMIN")
 public class AdminResource {
 
+private static final Logger LOG = Logger.getLogger(AdminResource.class);
+
     @Inject
     AdminService adminService;
 
     @GET
     @Path("/dashboard")
     public Response dashboard(){
+        LOG.info(" Método AdminResource.dashboard() chamado");
         return Response.ok("Área do Admin").build();
     }
 
@@ -39,6 +44,7 @@ public class AdminResource {
     @POST
     @Transactional
     public Response criarAdmin(AdminRequestDTO dto) {
+        LOG.info(" Método AdminResource.criarAdmin() chamado");
         AdminResponseDTO response = adminService.criarAdmin(dto);
         return Response.status(Response.Status.CREATED).entity(response).build();
     }
@@ -46,12 +52,14 @@ public class AdminResource {
     @GET
     @Path("/{id}")
     public Response buscarPorId(@PathParam("id") Long id) {
+        LOG.info("🛠️ Método AdminResource.buscarPorId() chamado");
         AdminResponseDTO response = adminService.buscarPorId(id);
         return Response.ok(response).build();
     }
 
     @GET
     public Response listarTodos() {
+        LOG.info(" Método AdminResource.listarTodos() chamado");
         List<AdminResponseDTO> admins = adminService.listarTodos();
         return Response.ok(admins).build();
     }
@@ -63,6 +71,7 @@ public class AdminResource {
         @PathParam("id") Long id,
         String novoDepartamento
     ) {
+        LOG.info(" Método AdminResource.atualizarDepartamento() chamado");
         adminService.atualizarDepartamento(id, novoDepartamento);
         return Response.ok().build();
     }
@@ -72,6 +81,7 @@ public class AdminResource {
     @Path("/clientes/{id}")
     @Transactional
     public Response banirCliente(@PathParam("id") Long clienteId) {
+        LOG.info(" Método AdminResource.banirCliente() chamado");
         adminService.banirCliente(clienteId);
         return Response.noContent().build();
     }

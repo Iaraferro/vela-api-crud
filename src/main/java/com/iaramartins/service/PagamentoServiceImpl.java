@@ -1,14 +1,17 @@
 package com.iaramartins.service;
 
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.google.zxing.WriterException;
 import com.iaramartins.dto.PagamentoRequestDTO;
 import com.iaramartins.dto.PagamentoResponseDTO;
 import com.iaramartins.model.Pagamento;
 import com.iaramartins.model.Pedido;
 import com.iaramartins.repository.PedidoRepository;
+import com.iaramartins.util.QrCodeUtil;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -147,5 +150,34 @@ public class PagamentoServiceImpl implements PagamentoService{
     }
 
     em.remove(pagamento);
+    }
+
+
+     @Override
+    public byte[] gerarQrCodePagamento(Long pedidoId) {
+        Pagamento pagamento = buscarPagamentoPorPedidoId(pedidoId);
+    String qrContent = String.format("Pagamento para pedido %d - Valor: %.2f - Método: %s",
+            pedidoId, pagamento.getValor(), pagamento.getMetodo());
+    
+    try {
+        return QrCodeUtil.gerarQRCodeEmBytes(qrContent, 250, 250);
+    } catch (WriterException e) {
+        throw new RuntimeException("Erro ao gerar QR Code: " + e.getMessage(), e);
+    } catch (IOException e) {
+        throw new RuntimeException("Erro de IO ao gerar QR Code: " + e.getMessage(), e);
+    }
+}
+    
+
+    private Pagamento buscarPagamentoPorPedidoId(Long pedidoId) {
+        try {
+            return em.createQuery(
+                "SELECT p FROM Pagamento p WHERE p.pedido.id = :pedidoId", 
+                Pagamento.class)
+                .setParameter("pedidoId", pedidoId)
+                .getSingleResult();
+        } catch (NoResultException e) {
+            throw new NotFoundException("Nenhum pagamento encontrado para o pedido ID: " + pedidoId);
+        }
     }
 }

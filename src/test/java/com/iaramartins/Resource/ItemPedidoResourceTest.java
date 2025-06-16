@@ -12,6 +12,7 @@ import io.restassured.http.ContentType;
 
 import com.iaramartins.dto.ItemPedidoRequestDTO;
 import com.iaramartins.dto.ItemPedidoResponseDTO;
+
 import com.iaramartins.service.ItemPedidoService;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -30,6 +31,9 @@ public class ItemPedidoResourceTest {
     private static Long pedidoId = 1L;
     private static Long velaId = 1L;
 
+    private String token;
+
+
     @BeforeEach
     @Transactional
     void setup() {
@@ -37,6 +41,9 @@ public class ItemPedidoResourceTest {
         itemPedidoService.listarItensPorPedido(pedidoId).forEach(item -> {
             itemPedidoService.removerItem(item.id());
         });
+       
+
+        token = TokenUtils.generateClientToken();
     }
 
     private ItemPedidoRequestDTO criarRequest(int quantidade) {
@@ -49,6 +56,7 @@ public class ItemPedidoResourceTest {
          // Cria o DTO corretamente
          ItemPedidoResponseDTO response = given()
          .contentType(ContentType.JSON)
+         .header("Authorization", "Bearer " + token)
          .body(criarRequest(1))
          .when()
          .post("/pedidos/" + pedidoId + "/itens")
@@ -66,6 +74,7 @@ public class ItemPedidoResourceTest {
     void testBuscarItemPorId() {
         ItemPedidoResponseDTO item = itemPedidoService.adicionarItem(pedidoId, criarRequest(1));
         given()
+            .header("Authorization", "Bearer " + token)
             .when()
             .get("/pedidos/" + pedidoId + "/itens/detalhes/" + item.id())
             .then()
@@ -80,6 +89,7 @@ public class ItemPedidoResourceTest {
         itemPedidoService.adicionarItem(pedidoId, criarRequest(1));
 
         given()
+        .header("Authorization", "Bearer " + token)
         .queryParam("quantidadeMinima", 3)
             .when()
             .get("/pedidos/" + pedidoId + "/itens/filtros")
@@ -96,10 +106,10 @@ public class ItemPedidoResourceTest {
         pedidoId, criarRequest(1));
 
         Double precoUnitarioAtual = itemParaAtualizar.precoUnitario();
-        int novaQuantidade = 3;
+        int novaQuantidade = 2;
         
-
         given()
+        .header("Authorization", "Bearer " + token)
         .queryParam("quantidade", novaQuantidade)
         .when()
         .put("/pedidos/" + pedidoId + "/itens/" + itemParaAtualizar.id())
@@ -114,6 +124,7 @@ public class ItemPedidoResourceTest {
     void testRemoverItem() {
         ItemPedidoResponseDTO item = given()
         .contentType(ContentType.JSON)
+        .header("Authorization", "Bearer " + token)
         .body(criarRequest(1))
         .when()
         .post("/pedidos/" + pedidoId + "/itens")
@@ -123,6 +134,7 @@ public class ItemPedidoResourceTest {
 
     // 2. Remove o item - agora esperando 204 (No Content)
     given()
+        .header("Authorization", "Bearer " + token)
         .when()
         .delete("/pedidos/" + pedidoId + "/itens/" + item.id())
         .then()
@@ -130,6 +142,7 @@ public class ItemPedidoResourceTest {
 
     // 3. Verifica que o item foi removido
     given()
+        .header("Authorization", "Bearer " + token)
         .when()
         .get("/pedidos/" + pedidoId + "/itens/detalhes/" + item.id())
         .then()
@@ -143,6 +156,7 @@ public class ItemPedidoResourceTest {
         itemPedidoService.adicionarItem(pedidoId, criarRequest(1));
         itemPedidoService.adicionarItem(pedidoId, criarRequest(2));
         given()
+            .header("Authorization", "Bearer " + token)
             .when()
             .get("/pedidos/" + pedidoId + "/itens/total-itens")
             .then()
