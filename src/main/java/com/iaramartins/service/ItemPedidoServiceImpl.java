@@ -6,7 +6,6 @@ import com.iaramartins.dto.ItemPedidoRequestDTO;
 import com.iaramartins.dto.ItemPedidoResponseDTO;
 import com.iaramartins.model.ItemPedido;
 import com.iaramartins.model.Pedido;
-import com.iaramartins.model.TipoVela;
 import com.iaramartins.model.Vela;
 import com.iaramartins.repository.PedidoRepository;
 import com.iaramartins.repository.VelaRepository;
@@ -66,7 +65,6 @@ public class ItemPedidoServiceImpl implements ItemPedidoService{
         return new ItemPedidoResponseDTO(
             item.getId(),
             vela.getNome(),
-            vela.getTipo(),
             item.getQuantidade(),
             item.getPrecoUnitario()
         );
@@ -104,7 +102,6 @@ public class ItemPedidoServiceImpl implements ItemPedidoService{
             .map(item -> new ItemPedidoResponseDTO(
                 item.getId(),
                 item.getVela().getNome(),
-                item.getVela().getTipo(),
                 item.getQuantidade(),
                 item.getPrecoUnitario()
             ))
@@ -123,7 +120,6 @@ public class ItemPedidoServiceImpl implements ItemPedidoService{
         return new ItemPedidoResponseDTO(
             item.getId(),
             item.getVela().getNome(),
-            item.getVela().getTipo(),
             item.getQuantidade(),
             item.getPrecoUnitario()
         );
@@ -138,7 +134,6 @@ public class ItemPedidoServiceImpl implements ItemPedidoService{
     return new ItemPedidoResponseDTO(
         item.getId(),
         item.getVela().getNome(),
-        item.getVela().getTipo(),
         item.getQuantidade(),
         item.getPrecoUnitario()
     );
@@ -146,16 +141,13 @@ public class ItemPedidoServiceImpl implements ItemPedidoService{
 
 @Override
 public List<ItemPedidoResponseDTO> listarItensPorPedidoComFiltros(
-    Long pedidoId, 
-    TipoVela tipoVela, 
+    Long pedidoId,  
     Integer quantidadeMinima
 ) {
     String query = "SELECT i FROM ItemPedido i WHERE i.pedido.id = :pedidoId";
     
     // Filtros dinâmicos
-    if (tipoVela != null) {
-        query += " AND i.vela.tipo = :tipoVela";
-    }
+    
     if (quantidadeMinima != null) {
         query += " AND i.quantidade >= :quantidadeMinima";
     }
@@ -163,9 +155,6 @@ public List<ItemPedidoResponseDTO> listarItensPorPedidoComFiltros(
     TypedQuery<ItemPedido> typedQuery = em.createQuery(query, ItemPedido.class)
         .setParameter("pedidoId", pedidoId);
     
-    if (tipoVela != null) {
-        typedQuery.setParameter("tipoVela", tipoVela);
-    }
     if (quantidadeMinima != null) {
         typedQuery.setParameter("quantidadeMinima", quantidadeMinima);
     }
@@ -175,7 +164,6 @@ public List<ItemPedidoResponseDTO> listarItensPorPedidoComFiltros(
         .map(item -> new ItemPedidoResponseDTO(
             item.getId(),
             item.getVela().getNome(),
-            item.getVela().getTipo(),
             item.getQuantidade(),
             item.getPrecoUnitario()
         ))

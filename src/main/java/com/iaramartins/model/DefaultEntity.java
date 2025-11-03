@@ -2,7 +2,7 @@ package com.iaramartins.model;
 
 import java.time.LocalDateTime;
 
-
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,7 +11,7 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PreUpdate;
 
 @MappedSuperclass
-public abstract class DefaultEntity {
+public abstract class DefaultEntity extends PanacheEntityBase{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,8 +19,8 @@ public abstract class DefaultEntity {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "update_at")
-    private LocalDateTime updatedAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt = LocalDateTime.now();
  
     // Getters e Setters
     public Long getId() {
@@ -43,6 +43,7 @@ public abstract class DefaultEntity {
     public void setUpdatedAt() {
         this.updatedAt = LocalDateTime.now();
     }
+
 
 
 }

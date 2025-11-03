@@ -34,9 +34,6 @@ public class EnderecoEntregaServiceImpl implements EnderecoEntregaService{
                 "Pedido não encontrado com ID: " + dto.pedidoId(), 
                 Response.Status.BAD_REQUEST));
 
-      
-        
-
         EnderecoEntrega endereco = new EnderecoEntrega();
         endereco.setRua(dto.rua());
         endereco.setNumero(dto.numero());

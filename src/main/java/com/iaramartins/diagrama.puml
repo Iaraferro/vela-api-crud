@@ -1,0 +1,148 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+' =======================
+' PACOTES / ENTIDADES BASE
+' =======================
+
+ 
+
+  enum Role {
+    CLIENTE
+    ADMIN
+  }
+
+
+
+
+  abstract class Usuario {
+    - String email
+    - String senha
+    - Role role
+  }
+
+  class Cliente {
+    - String nome
+    - String cpf
+    - String telefone
+  }
+
+  class Admin {
+    - String departamento
+  }
+
+
+
+  class Categoria{
+    - String nome
+    - String descricao
+  }
+
+  class Vela {
+    - String nome
+    - double preco
+    - String ritualAssociado
+    - boolean disponivel
+    - Integer estoque
+  }
+
+  class Fornecedor {
+    - String cnpj
+  }
+
+class telefone{
+  - numero: String
+  - codigoArea: string
+}
+
+
+  class Pedido {
+    - LocalDateTime data
+    - Double total
+    - String status
+  }
+
+  class ItemPedido {
+    - int quantidade
+    - Double precoUnitario
+    + calcularSubtotal()
+  }
+
+  class Pagamento {
+    - BigDecimal valor
+    - String metodo
+    - String status
+    - LocalDateTime dataPagamento
+    + aprovar()
+    + recusar()
+  }
+
+  class EnderecoEntrega {
+    - String rua
+    - String numero
+    - String complemento
+    - String bairro
+    - String cidade
+    - String estado
+    - String cep
+  }
+
+  entity Aroma {
+  + essenciaAromatica: String
+}
+
+entity Ingrediente {
+  - recipiente: String
+  - pavio: String
+  - tipoCera: String
+}
+
+
+class Pessoa{
+ - id: Long
+ - nome: String
+}
+
+class PessoaFisica{
+  - cpf: String
+}
+
+PessoaFisica -up-|> Pessoa
+Fornecedor -up-|> Pessoa
+Pessoa "1" *--> "*" Telefone
+' Relação muitos-para-muitos usando tabela de associação
+Fornecedor "1" <-- "*" Vela
+
+
+
+' =======================
+' 1. HERANÇA
+' =======================
+
+
+Usuario <|-- Cliente
+Usuario <|-- Admin
+' 2. AGREGAÇÃO
+' =======================
+ 
+
+' =======================
+' 3. COMPOSIÇÃO
+' =======================
+Pedido "1" -- "*" ItemPedido 
+Pedido "1" -- "1" EnderecoEntrega 
+Pedido "1" -- "1" Pagamento 
+
+
+' =======================
+' 4. ASSOCIAÇÕES
+' =======================
+Cliente "1" -- "*" Pedido : realiza
+
+
+Vela "*" --> "*" Aroma
+Vela "*" --> "*" Ingrediente
+Vela "*" --> "1" Categoria
+
+
+@enduml

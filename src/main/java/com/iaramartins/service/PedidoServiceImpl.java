@@ -33,6 +33,18 @@ public class PedidoServiceImpl implements PedidoService {
     VelaRepository velaRepository;
 
     @Override
+    public List<PedidoResponseDTO> listarTodos() {
+    List<Pedido> pedidos = em.createQuery(
+        "SELECT p FROM Pedido p", 
+        Pedido.class
+    ).getResultList();
+
+    return pedidos.stream()
+        .map(this::toResponseDTO)
+        .collect(Collectors.toList());
+}
+
+    @Override
     @Transactional
     public PedidoResponseDTO criar(PedidoRequestDTO dto) {
         //Valida cliente

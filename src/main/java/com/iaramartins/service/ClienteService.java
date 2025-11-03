@@ -10,6 +10,8 @@ public interface ClienteService {
  ClienteResponseDTO buscarPerfil(Long id);
  void atualizar(Long id, ClienteRequestDTO dto); 
  void deletarCliente(Long id);
+ List<ClienteResponseDTO> getAll(int page, int pageSize);
+ long count();
  List<ClienteResponseDTO> listarTodos();
  List<ClienteResponseDTO> buscarPorNome(String nome);
 } 

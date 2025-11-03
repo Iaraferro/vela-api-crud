@@ -8,7 +8,6 @@ public record FornecedorResponseDTO(
     Long id,
     String nome,
     String cnpj,
-    String telefone,
     LocalDateTime createdAt
 ) {
      public static FornecedorResponseDTO fromEntity(Fornecedor fornecedor) {
@@ -16,7 +15,6 @@ public record FornecedorResponseDTO(
             fornecedor.getId(),
             fornecedor.getNome(),
             fornecedor.getCnpj(),
-            fornecedor.getTelefone(),
             fornecedor.getCreatedAt()
         );
 

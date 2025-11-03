@@ -1,9 +1,12 @@
 package com.iaramartins.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.iaramartins.dto.ClienteResponseDTO;
 import com.iaramartins.dto.VelaRequestDTO;
 import com.iaramartins.dto.VelaResponseDTO;
+import com.iaramartins.model.Cliente;
 import com.iaramartins.model.Vela;
 import com.iaramartins.repository.VelaRepository;
 
@@ -27,10 +30,7 @@ public class VelaServiceImpl implements VelaService {
     public VelaResponseDTO cadastrar(VelaRequestDTO dto) {
         Vela vela = new Vela();
         vela.setNome(dto.nome());
-        vela.setTipo(dto.tipo());
-        vela.setAroma(dto.aroma());
         vela.setPreco(dto.preco());
-        vela.setIngrediente(dto.ingrediente());
         vela.setRitualAssociado(dto.ritualAssociado());
         vela.setEstoque(dto.estoque());
         em.persist(vela);
@@ -46,6 +46,14 @@ public class VelaServiceImpl implements VelaService {
         return VelaResponseDTO.fromEntity(vela);  // Convertendo para DTO
     }
 
+    @Override
+    public List<VelaResponseDTO> listarTodas() {
+        return em.createQuery("SELECT v FROM Vela v", Vela.class)
+            .getResultList()
+            .stream()
+            .map(VelaResponseDTO::fromEntity)
+            .toList();
+    }
     // LISTAR DISPONÍVEIS
     @Override
     public List<VelaResponseDTO> listarDisponiveis() {
@@ -67,7 +75,6 @@ public class VelaServiceImpl implements VelaService {
         } 
         vela.setNome(dto.nome());
         vela.setPreco(dto.preco());
-        vela.setTipo(dto.tipo()); // Novo campo
     }
 
    // DELETAR VELA
@@ -96,5 +103,26 @@ public class VelaServiceImpl implements VelaService {
         throw new NotFoundException("Vela não encontrada");
     }
     return vela.getEstoque();
+    }
+
+
+    @Override
+public List<VelaResponseDTO> getAll(int page, int pageSize) {
+    try {
+        List<Vela> list = em.createQuery("SELECT v FROM Vela v ORDER BY v.id", Vela.class)
+                           .setFirstResult(page * pageSize)
+                           .setMaxResults(pageSize)
+                           .getResultList();
+        
+        return list.stream()
+                  .map(VelaResponseDTO::fromEntity)  // Use o método correto
+                  .collect(Collectors.toList());
+    } catch (Exception e) {
+        throw new RuntimeException("Erro ao buscar velas paginadas: " + e.getMessage(), e);
+    }
+}
+    @Override
+    public long count(){
+        return velaRepository.count();
     }
 }

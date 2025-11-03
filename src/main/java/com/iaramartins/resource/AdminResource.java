@@ -8,7 +8,7 @@ import com.iaramartins.dto.AdminResponseDTO;
 import com.iaramartins.service.AdminService;
 
 
-import jakarta.annotation.security.RolesAllowed;
+
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
@@ -25,7 +25,6 @@ import jakarta.ws.rs.core.Response;
 @Path("/admin")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@RolesAllowed("ADMIN")
 public class AdminResource {
 
 private static final Logger LOG = Logger.getLogger(AdminResource.class);

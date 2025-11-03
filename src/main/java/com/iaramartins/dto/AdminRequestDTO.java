@@ -9,7 +9,8 @@ public record AdminRequestDTO(
     String email,
     @NotBlank @Size(min=8)
     String senha,
-    @NotBlank String departamento
+    @NotBlank 
+    String departamento
 ) {
 
 

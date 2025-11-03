@@ -7,14 +7,14 @@ import com.iaramartins.dto.ClienteRequestDTO;
 import com.iaramartins.dto.ClienteResponseDTO;
 import com.iaramartins.service.ClienteService;
 
-import io.quarkus.security.Authenticated;
+
 import jakarta.annotation.security.PermitAll;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
@@ -28,7 +28,7 @@ import jakarta.ws.rs.core.Response;
 
 import jakarta.ws.rs.core.Response.Status;
 
-@Authenticated
+//@Authenticated
 @Path("/clientes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -61,7 +61,7 @@ public class ClienteResource {
    //Buscar o próprio perfil (só o cliente logado)
    @GET
    @Path("/{id}")
-   @RolesAllowed("CLIENTE") //Exige autenticação
+   //@RolesAllowed("CLIENTE") //Exige autenticação
    public Response buscarPerfil(@PathParam("id") Long id){
     LOG.info("🙋 Método ClienteResource.buscarPerfil() chamado");
     try {
@@ -70,12 +70,24 @@ public class ClienteResource {
         return Response.status(Status.NOT_FOUND).build();
         }
    }
+   @GET
+   public Response fidAll(
+    @QueryParam("page") @DefaultValue("0") int page,
+    @QueryParam("pageSize") @DefaultValue("100") int pageSize){
+           return Response.ok(clienteService.getAll(page, pageSize)).build();
+   }
+
+   @GET
+   @Path("/count")
+   public long count(){
+    return clienteService.count();
+   }
 
    //Atualizar os próprios dados
    @PUT
    @Path("/{id}")
    @Transactional
-   @RolesAllowed("CLIENTE") //Exige autenticação
+   //@RolesAllowed("CLIENTE") //Exige autenticação
    public Response atualizar(@PathParam("id") Long id, ClienteRequestDTO dto){
         LOG.info(" Método ClienteResource.atualizar() chamado");
         try {
@@ -90,14 +102,15 @@ public class ClienteResource {
    @DELETE
    @Path("/{id}")
    @Transactional
-   @RolesAllowed("CLIENTE") //Exige autenticação
+   //@RolesAllowed("CLIENTE") //Exige autenticação
    public void deletar(@PathParam("id") Long id){
      LOG.info(" Método ClienteResource.deletar() chamado");
      clienteService.deletarCliente(id);
    }
 
    @GET
-   @RolesAllowed("ADMIN") // Somente administradores podem listar todos clientes
+   //@RolesAllowed("ADMIN") // Somente administradores podem listar todos clientes
+   @PermitAll
    public Response listarTodos() {
     LOG.info(" Método ClienteResource.listarTodos() chamado");
     return Response.ok(clienteService.listarTodos()).build();
@@ -105,7 +118,7 @@ public class ClienteResource {
 
    @GET
    @Path("/buscar")
-   @RolesAllowed("ADMIN") // Somente administradores podem buscar clientes
+  // @RolesAllowed("ADMIN") // Somente administradores podem buscar clientes
    public Response buscarPorNome(@QueryParam("nome") String nome) {
     LOG.info(" Método ClienteResource.buscarPorNome() chamado");
     if (nome == null || nome.isBlank()) {

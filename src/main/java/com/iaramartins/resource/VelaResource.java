@@ -9,23 +9,26 @@ import com.iaramartins.dto.VelaRequestDTO;
 import com.iaramartins.dto.VelaResponseDTO;
 import com.iaramartins.service.VelaService;
 
-import io.quarkus.security.Authenticated;
+
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.annotation.security.PermitAll;
 
 
- @Authenticated
+
  @Path("/velas")
  @Produces(MediaType.APPLICATION_JSON)
  @Consumes(MediaType.APPLICATION_JSON)
@@ -48,8 +51,9 @@ import jakarta.ws.rs.core.Response;
 
     @GET
     @Path("/disponiveis")
+    @PermitAll
     public List<VelaResponseDTO> disponiveis() {
-        LOG.info(" Método VelaResource.disponiveis() chamado");
+        //LOG.info(" Método VelaResource.disponiveis() chamado");
         return velaService.listarDisponiveis();
     }
 
@@ -103,8 +107,26 @@ import jakarta.ws.rs.core.Response;
 
     }
 
+    @GET
+    @PermitAll
+    public Response listarTodas() {
+        List<VelaResponseDTO> velas = velaService.listarTodas();
+        return Response.ok(velas).build();
+    }
+    @GET
+    public Response findAll(
+        @QueryParam("page") @DefaultValue("0") int page,
+        @QueryParam("pageSize") @DefaultValue("100") int pageSize)
+    {
+     return Response.ok(velaService.getAll(page, pageSize)).build();
+    }
     
+    @GET
+    @Path("/count")
+    public long count(){
+        return velaService.count();
+    }
+
 }
 
     
-

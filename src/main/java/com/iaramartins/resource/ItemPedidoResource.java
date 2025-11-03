@@ -1,11 +1,11 @@
 package com.iaramartins.resource;
 import org.jboss.logging.Logger;
 
-import java.util.List;
+
 
 import com.iaramartins.dto.ItemPedidoRequestDTO;
-import com.iaramartins.dto.ItemPedidoResponseDTO;
-import com.iaramartins.model.TipoVela;
+
+
 import com.iaramartins.service.ItemPedidoService;
 
 import io.quarkus.security.Authenticated;
@@ -64,18 +64,6 @@ public class ItemPedidoResource {
             .build();
     }
 
-    @GET
-    @Path("/filtros")
-    public Response listarItensComFiltros(
-    @PathParam("pedidoId") Long pedidoId, @QueryParam("tipoVela") TipoVela tipoVela,  
-    @QueryParam("quantidadeMinima") Integer quantidadeMinima  
-    ) {
-      LOG.info("📦 Método ItemPedidoResource.listarItensComFiltros() chamado");
-      List<ItemPedidoResponseDTO> itensFiltrados = itemPedidoService
-        .listarItensPorPedidoComFiltros(pedidoId, tipoVela, quantidadeMinima);
-    
-    return Response.ok(itensFiltrados).build();
-    }
 
     // 2. PUT para atualizar a quantidade de um item (ex: /pedidos/1/itens/2)
     @PUT

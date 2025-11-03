@@ -8,6 +8,7 @@ import com.iaramartins.dto.ClienteRequestDTO;
 import com.iaramartins.dto.ClienteResponseDTO;
 import com.iaramartins.model.Cliente;
 import com.iaramartins.model.Role;
+import com.iaramartins.repository.ClienteRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -20,6 +21,8 @@ import jakarta.ws.rs.NotFoundException;
 public class ClienteServiceImpl implements ClienteService {
     @Inject
     EntityManager em;
+    @Inject
+    ClienteRepository clienteRepository;
 
     @Override
     @Transactional
@@ -70,6 +73,19 @@ public class ClienteServiceImpl implements ClienteService {
         if (cliente != null) {
             em.remove(cliente); // Os pedidos serão deletados automaticamente
         }
+    }
+
+    @Override
+    public List<ClienteResponseDTO> getAll(int page, int pageSize){
+        List<Cliente> list = clienteRepository
+                                 .findAll()
+                                 .page(page, pageSize)
+                                 .list();
+        return list.stream().map(e -> ClienteResponseDTO.valueOf(e)).collect(Collectors.toList());
+    }
+    @Override
+    public long count(){
+        return clienteRepository.count();
     }
 
     @Override

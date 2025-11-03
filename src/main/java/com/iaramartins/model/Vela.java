@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
@@ -18,15 +20,28 @@ public class Vela extends DefaultEntity {
     private CategoriaVela categoria;
 
     @Enumerated(EnumType.STRING) //Isso significa que os valores que estão na classe TipoVela serão valores inseridos na coluna TipoVela da tabela Vela como String
-    private TipoVela tipo;
 
     @ManyToOne
     @JoinColumn(name = "fornecedor_id")
     private Fornecedor fornecedor;
 
-    private String aroma;
+    @ManyToMany
+    @JoinTable(
+        name = "vela_ingrediente",
+        joinColumns = @JoinColumn(name = "vela_id"),
+        inverseJoinColumns = @JoinColumn(name = "ingrediente_id")
+    )
+    private List<Ingrediente> ingredientes;
+
+    @ManyToMany
+    @JoinTable(
+        name = "vela_aroma",
+        joinColumns = @JoinColumn(name = "vela_id"),
+        inverseJoinColumns = @JoinColumn(name = "aroma_id")
+    )
+    private List<Aroma> aromas;
+
     private double preco;
-    private String ingrediente; // Exemplo: "Cera de soja, ervas de arruda, óleo essencial de alecrim"
     private String ritualAssociado;// Exemplo: "Banimento de energias negativas"
     private boolean disponivel = true;
     private Integer estoque;
@@ -41,20 +56,6 @@ public class Vela extends DefaultEntity {
         this.nome = nome;
     }
 
-    public TipoVela getTipo(){
-        return tipo;
-    }
-
-    public void setTipo(TipoVela tipo){
-        this.tipo = tipo;
-    }
-    public String getAroma() {
-        return aroma;
-    }
-
-    public void setAroma(String aroma) {
-        this.aroma = aroma;
-    }
 
     public double getPreco() {
         return preco;
@@ -66,13 +67,6 @@ public class Vela extends DefaultEntity {
         this.preco = preco;
     }
 
-    public String getIngrediente() {
-        return ingrediente;
-    }
-
-    public void setIngrediente(String ingrediente) {
-        this.ingrediente = ingrediente;
-    }
 
     public String getRitualAssociado() {
         return ritualAssociado;

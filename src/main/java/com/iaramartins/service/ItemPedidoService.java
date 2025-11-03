@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.iaramartins.dto.ItemPedidoRequestDTO;
 import com.iaramartins.dto.ItemPedidoResponseDTO;
-import com.iaramartins.model.TipoVela;
+
 
 public interface ItemPedidoService {
     ItemPedidoResponseDTO adicionarItem(Long pedidoId, ItemPedidoRequestDTO dto);
@@ -13,8 +13,7 @@ public interface ItemPedidoService {
     ItemPedidoResponseDTO atualizarQuantidade(Long itemId, int novaQuantidade);
     ItemPedidoResponseDTO buscarItemPorId(Long itemId);
     List<ItemPedidoResponseDTO> listarItensPorPedidoComFiltros(
-        Long pedidoId, 
-        TipoVela tipoVela, 
+        Long pedidoId,  
         Integer quantidadeMinima
     );
 

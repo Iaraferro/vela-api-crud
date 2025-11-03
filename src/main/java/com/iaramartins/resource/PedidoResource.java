@@ -6,7 +6,7 @@ import com.iaramartins.dto.PedidoResponseDTO;
 import com.iaramartins.service.PedidoService;
 
 
-import jakarta.annotation.security.RolesAllowed;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -27,7 +27,6 @@ import org.jboss.logging.Logger;
 
 @Path("/pedidos")
 @ApplicationScoped
-@RolesAllowed({"ADMIN", "CLIENTE"})
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PedidoResource {
@@ -37,7 +36,6 @@ public class PedidoResource {
     PedidoService pedidoService;
 
     @POST
-    @RolesAllowed({"ADMIN", "CLIENTE"})
     @Transactional
     public Response criar(PedidoRequestDTO dto) {
         LOG.info("➡️ Criando pedido para cliente ID: " + dto.clienteId());
@@ -46,6 +44,13 @@ public class PedidoResource {
         LOG.info("✅ Pedido criado com sucesso. ID: " + pedido.id());
         return Response.status(Response.Status.CREATED).entity(pedido).build();
     }
+
+    @GET
+    public Response listarTodos() {
+    LOG.info("📋 Listando todos os pedidos");
+    // Você precisa criar este método no PedidoService
+    return Response.ok(pedidoService.listarTodos()).build();
+}
 
     @GET
     @Path("/{id}")
@@ -88,7 +93,7 @@ public class PedidoResource {
 
     @DELETE
     @Path("/{id}")
-    @RolesAllowed("CLIENTE")
+   // @RolesAllowed("CLIENTE")
     @Transactional
     public Response cancelarPedido(@PathParam("id") Long id) {
         LOG.info(" Cancelando pedido ID: " + id);

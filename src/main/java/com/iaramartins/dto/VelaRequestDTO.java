@@ -1,6 +1,6 @@
 package com.iaramartins.dto;
 
-import com.iaramartins.model.TipoVela;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -14,7 +14,7 @@ public record VelaRequestDTO(
     @Positive(message = "O preço deve ser positivo")
     double preco,
 
-    TipoVela tipo,  // Campo opcional (se você quiser manter)
+      
 
     @NotBlank(message = "O aroma não pode ser vazio!")
     String aroma,
@@ -29,7 +29,7 @@ public record VelaRequestDTO(
      public VelaRequestDTO {
         estoque = estoque != null ? estoque : 0; // Valor padrão
     }
-    public static VelaRequestDTO createWithoutStock(String nome, double preco, TipoVela tipo,String aroma, String ingrediente, String ritualAssociado) {
-        return new VelaRequestDTO(nome, preco, tipo, aroma, ingrediente, ritualAssociado, 0);
+    public static VelaRequestDTO createWithoutStock(String nome, double preco, String aroma, String ingrediente, String ritualAssociado) {
+        return new VelaRequestDTO(nome, preco, aroma, ingrediente, ritualAssociado, 0);
     }
 } 

@@ -4,13 +4,14 @@ import java.util.List;
 
 import com.iaramartins.model.Fornecedor;
 
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 @ApplicationScoped
-public class FornecedorRepository {
+public class FornecedorRepository implements PanacheRepository<Fornecedor> {
     @Inject
     EntityManager em;
 

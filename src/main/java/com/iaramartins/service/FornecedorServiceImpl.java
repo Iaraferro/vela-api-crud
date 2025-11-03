@@ -27,7 +27,6 @@ public class FornecedorServiceImpl implements FornecedorService {
         Fornecedor fornecedor = new Fornecedor();
         fornecedor.setNome(dto.nome());
         fornecedor.setCnpj(dto.cnpj());
-        fornecedor.setTelefone(dto.telefone());
         
         repository.persist(fornecedor);
         return FornecedorResponseDTO.fromEntity(fornecedor);
@@ -51,9 +50,7 @@ public class FornecedorServiceImpl implements FornecedorService {
     public FornecedorResponseDTO atualizar(Long id, FornecedorRequestDTO dto) {
         Fornecedor fornecedor = repository.findById(id);
         if (fornecedor != null) {
-            fornecedor.setNome(dto.nome());
             fornecedor.setCnpj(dto.cnpj());
-            fornecedor.setTelefone(dto.telefone());
             repository.persist(fornecedor);
         }
         return FornecedorResponseDTO.fromEntity(fornecedor);

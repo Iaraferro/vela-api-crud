@@ -22,8 +22,7 @@ import io.restassured.response.Response;
 import jakarta.inject.Inject;
 
 import com.iaramartins.dto.VelaRequestDTO;
-import com.iaramartins.model.TipoVela;
-import com.iaramartins.model.Vela;
+
 import com.iaramartins.service.VelaService;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -46,7 +45,6 @@ public class VelaResourceTest {
         VelaRequestDTO dto =  VelaRequestDTO.createWithoutStock(
             "Vela de Proteção Teste",  // Nome único para teste
             39.90,                     // Preço dentro da faixa
-            TipoVela.PROTECAO_ESPIRITUAL,
             "Arruda e Alecrim",        // Aroma existente
             "Cera de abelha, carvão",  // Ingredientes
             "Proteção teste"           // Ritual
@@ -115,7 +113,6 @@ public class VelaResourceTest {
             .body( VelaRequestDTO.createWithoutStock(
                 "Vela Temp",
                 25.00,
-                TipoVela.LIMPEZA_ENERGETICA,
                 "Limão",
                 "Cera",
                 "Teste"
@@ -128,7 +125,6 @@ public class VelaResourceTest {
         VelaRequestDTO atualizacao = VelaRequestDTO.createWithoutStock(
             "Vela Atualizada",
             45.00,
-            TipoVela.PROTECAO_ESPIRITUAL,
             "Novo Aroma",
             "Novos Ingredientes",
             "Novo Ritual"
@@ -162,7 +158,6 @@ public class VelaResourceTest {
             .body(VelaRequestDTO.createWithoutStock(
                 "Vela para Deletar",
                 15.00,
-                TipoVela.LIMPEZA_ENERGETICA,
                 "Eucalipto",
                 "Cera pura",
                 "Teste"
