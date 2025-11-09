@@ -3,13 +3,13 @@ package com.iaramartins.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.iaramartins.dto.ClienteResponseDTO;
+
 import com.iaramartins.dto.VelaRequestDTO;
 import com.iaramartins.dto.VelaResponseDTO;
-import com.iaramartins.model.Cliente;
 import com.iaramartins.model.Vela;
 import com.iaramartins.repository.VelaRepository;
 
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -107,7 +107,7 @@ public class VelaServiceImpl implements VelaService {
 
 
     @Override
-public List<VelaResponseDTO> getAll(int page, int pageSize) {
+    public List<VelaResponseDTO> getAll(int page, int pageSize) {
     try {
         List<Vela> list = em.createQuery("SELECT v FROM Vela v ORDER BY v.id", Vela.class)
                            .setFirstResult(page * pageSize)
@@ -119,10 +119,20 @@ public List<VelaResponseDTO> getAll(int page, int pageSize) {
                   .collect(Collectors.toList());
     } catch (Exception e) {
         throw new RuntimeException("Erro ao buscar velas paginadas: " + e.getMessage(), e);
+    }  
     }
-}
     @Override
     public long count(){
-        return velaRepository.count();
+          try {
+        Long count = em.createQuery("SELECT COUNT(v) FROM Vela v", Long.class)
+                      .getSingleResult();
+        return count != null ? count : 0L;
+    } catch (Exception e) {
+        Log.error("Erro ao contar velas", e);
+        return 0L;
     }
+    }
+
+   
 }
+

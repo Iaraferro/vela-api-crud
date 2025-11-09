@@ -43,7 +43,7 @@ public class FornecedorResourceTest {
     @Order(1)
     public void testCriarFornecedor() {
         FornecedorRequestDTO dto = new FornecedorRequestDTO(
-            "Fornecedor Teste"
+            "Fornecedor Teste", "CNPJ ou outro campo"
         );
 
         Response response = RestAssured.given()
@@ -103,7 +103,7 @@ public class FornecedorResourceTest {
     public void testBuscarFornecedorPorNome() {
         // Primeiro cria um fornecedor com nome específico para buscar
         String nomeBusca = "Fornecedor Especial Busca";
-        FornecedorRequestDTO dto = new FornecedorRequestDTO("nome do fornecedor" );
+        FornecedorRequestDTO dto = new FornecedorRequestDTO("nome do fornecedor", "CNPJ ou outro campo" );
         RestAssured.given()
             .contentType(ContentType.JSON)
             .header("Authorization", "Bearer " + token)
@@ -129,7 +129,7 @@ public class FornecedorResourceTest {
     @Order(5)
     public void testAtualizarFornecedor() {
         FornecedorRequestDTO dto = new FornecedorRequestDTO(
-            "Fornecedor Atualizado"
+            "Fornecedor Atualizado", "CNPJ ou outro campo"
         );
 
         Response response = RestAssured.given()
@@ -153,7 +153,7 @@ public class FornecedorResourceTest {
     @Order(6)
     public void testDeletarFornecedor() {
         FornecedorRequestDTO dto = new FornecedorRequestDTO(
-            "Fornecedor Para Deletar"
+            "Fornecedor Para Deletar", "CNPJ ou outro campo"
         );
         
         Response createResponse = RestAssured.given()

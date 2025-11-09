@@ -18,5 +18,7 @@ public interface VelaService {
   List<VelaResponseDTO> listarOrdenadasPorPreco();
   Integer verificarEstoque(Long id);
   List<VelaResponseDTO> getAll(int page, int pageSize);
-   long count();
+  long count();
+
+
 }

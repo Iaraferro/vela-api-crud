@@ -108,17 +108,12 @@ import jakarta.annotation.security.PermitAll;
     }
 
     @GET
-    @PermitAll
-    public Response listarTodas() {
-        List<VelaResponseDTO> velas = velaService.listarTodas();
-        return Response.ok(velas).build();
-    }
-    @GET
     public Response findAll(
         @QueryParam("page") @DefaultValue("0") int page,
-        @QueryParam("pageSize") @DefaultValue("100") int pageSize)
+        @QueryParam("size") @DefaultValue("100") int size)
     {
-     return Response.ok(velaService.getAll(page, pageSize)).build();
+       LOG.info("Método VelaResource.findAll() chamado - Page: " + page + ", Size: " + size);   
+     return Response.ok(velaService.getAll(page, size)).build();
     }
     
     @GET
